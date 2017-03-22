@@ -36,7 +36,7 @@ if [ -z "$PRITUNL_MONGODB_URI" ]; then
   PRITUNL_MONGODB_URI="mongodb://localhost:27017/pritunl"
 fi
 
-if [ -z "$PRITUNL_DONT_WRITE_CONFIG" ];
+if [ -z "$PRITUNL_DONT_WRITE_CONFIG" ]; then
     cat << EOF > /etc/pritunl.conf
     {
         "mongodb_uri": "$PRITUNL_MONGODB_URI",
