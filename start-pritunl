@@ -55,4 +55,4 @@ EOF
 
 fi
 
-exec /usr/bin/pritunl start
+exec /usr/bin/pritunl start -c /etc/pritunl.conf
