@@ -11,7 +11,7 @@ RUN locale-gen en_US en_US.UTF-8 \
     && apt-get update -q \
     && apt-get upgrade -y -q \
     && apt-get dist-upgrade -y -q \
-    && apt-get -y install pritunl mongodb-org \
+    && apt-get -y install pritunl mongodb-org iptables \
     && apt-get clean \
     && apt-get -y -q autoclean \
     && apt-get -y -q autoremove \
