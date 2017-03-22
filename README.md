@@ -24,6 +24,7 @@ docker run -d --privileged -e PRITUNL_MONGODB_URI=mongodb://some-mongo-host:2701
 ```
 
 Then you can login to your pritunl web ui at https://docker-host-address:9700
+
 Username: pritunl Password: pritunl
 
 I would suggest using docker data volume for persistent storage of pritunl data, something like this:
