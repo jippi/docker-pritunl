@@ -10,10 +10,20 @@ touch /var/log/pritunl.log
 touch /var/run/pritunl.pid
 /bin/rm /var/run/pritunl.pid
 
+# if the cmd is bash, just start an interactive shell
+if [ "$1" = "bash" ]; then
+    exec "$@"
+    exit $?
+fi
+
+# debug level defaults to false
+if [ -z "$DEBUG" ]; then
+    DEBUG="false"
+fi
+
 ## start a local mongodb instance if no mongodb specified through env
 if [ -z "$MONGODB_URI" ]; then
-  /usr/bin/mongod -f /etc/mongodb.conf &
-  sleep 70 ## for mongo to allocate journals
+  /usr/bin/mongod -f /etc/mongod.conf &
   MONGODB_URI="mongodb://localhost:27017/pritunl"
 fi
 
@@ -26,13 +36,11 @@ cat << EOF > /etc/pritunl.conf
     "server_cert_path": "/var/lib/pritunl/pritunl.crt",
     "temp_path": "/tmp/pritunl_%r",
     "bind_addr": "0.0.0.0",
-    "debug": false,
+    "debug": $DEBUG,
     "www_path": "/usr/share/pritunl/www",
     "local_address_interface": "auto",
     "port": 9700
 }
 EOF
 
-/usr/bin/pritunl start &
-[ "$1" ] && exec "$@"
-
+exec /usr/bin/pritunl start

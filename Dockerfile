@@ -1,6 +1,5 @@
 FROM ubuntu:16.04
 MAINTAINER Christian Winther <jippignu@gmail.com>
-ENV PRITUNL_VERSION 1.27.1282.77
 
 RUN locale-gen en_US en_US.UTF-8 \
     && dpkg-reconfigure locales \
