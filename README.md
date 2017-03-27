@@ -12,7 +12,7 @@
 
 Just build it or pull it from jippi/pritunl. Run it something like this:
 
-```
+```sh
 docker run \
     -d \
     --privileged \
@@ -25,7 +25,7 @@ docker run \
 If you have a mongodb somewhere you'd like to use for this rather than starting the built-in one you can
 do so through the `PRITUNL_MONGODB_URI` env var like this:
 
-```
+```sh
 docker run \
     -d \
     --privileged \
@@ -38,7 +38,7 @@ docker run \
 
 Example production usage:
 
-```
+```sh
 docker run \
     --name=pritunl \
     --detach \
@@ -57,7 +57,7 @@ Username: pritunl Password: pritunl
 
 I would suggest using docker data volume for persistent storage of pritunl data, something like this:
 
-```shell
+```sh
 ## create the data volume
 docker run \
     -v /var/lib/pritunl \
