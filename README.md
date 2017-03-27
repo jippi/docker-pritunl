@@ -72,9 +72,7 @@ docker run \
     -p 1194:1194/udp \
     -p 1194:1194/tcp \
     -p 9700:9700/tcp \
-    -e SERVICE_NAME=%H \
-    -e SERVICE_1194_ID=pritunl-vpn \
-    -e SERVICE_9700_ID=pritunl-web jippi/pritunl
+    jippi/pritunl
 ```
 
 Then you're on your own, but take a look at http://pritunl.com or https://github.com/pritunl/pritunl
