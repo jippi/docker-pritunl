@@ -23,6 +23,21 @@ do so through the `PRITUNL_MONGODB_URI` env var like this:
 docker run -d --privileged -e PRITUNL_MONGODB_URI=mongodb://some-mongo-host:27017/pritunl -p 1194:1194/udp -p 1194:1194/tcp -p 9700:9700/tcp jippi/pritunl
 ```
 
+Example:
+
+```
+docker run \
+    --name=pritunl \
+    --detach \
+    --privileged \
+    --network=host \
+    --restart=always \
+    -v /gluster/docker0/pritunl/mongodb:/var/lib/mongodb \
+    -v /gluster/docker0/pritunl/pritunl:/var/lib/pritunl \
+    -v /gluster/docker0/pritunl/pritunl.conf:/etc/pritunl.conf \
+    jippi/pritunl
+```
+    
 Then you can login to your pritunl web ui at https://docker-host-address:9700
 
 Username: pritunl Password: pritunl
