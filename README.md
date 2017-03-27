@@ -39,6 +39,9 @@ docker run \
 Example production usage:
 
 ```sh
+
+mkdir -p /gluster/docker0/pritunl/{mongodb,pritunl}
+
 docker run \
     --name=pritunl \
     --detach \
