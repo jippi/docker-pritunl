@@ -41,6 +41,7 @@ Example production usage:
 ```sh
 
 mkdir -p /gluster/docker0/pritunl/{mongodb,pritunl}
+touch gluster/docker0/pritunl/pritunl.conf
 
 docker run \
     --name=pritunl \
