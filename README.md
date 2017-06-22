@@ -5,7 +5,6 @@
 - `PRITUNL_DONT_WRITE_CONFIG` if set, `/etc/pritunl.conf` will not be auto-written on container start.
 - `PRITUNL_DEBUG` must be `true` or `false` - controls the `debug` config key.
 - `PRITUNL_BIND_ADDR` must be a valid IP on the host - defaults to `0.0.0.0` - controls the `bind_addr` config key.
-- `PRITUNL_PORT` must be a valid port for pritunl to listen web to listen on - default to `9700` - controls the `port` config key.
 - `PRITUNL_MONGODB_URI` URI to mongodb instance, default is starting a local mongodb instance in the container and use that.
 
 ## Usage
@@ -57,7 +56,7 @@ docker run \
     jippi/pritunl
 ```
     
-Then you can login to your pritunl web ui at https://docker-host-address:9700
+Then you can login to your pritunl web ui at https://docker-host-address
 
 Username: pritunl Password: pritunl
 
