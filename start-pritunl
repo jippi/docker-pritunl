@@ -25,10 +25,6 @@ if [ -z "$PRITUNL_BIND_ADDR" ]; then
     PRITUNL_BIND_ADDR="0.0.0.0"
 fi
 
-# allow changing port
-if [ -z "$PRITUNL_PORT" ]; then
-    PRITUNL_PORT="9700"
-fi
 
 ## start a local mongodb instance if no mongodb specified through env
 if [ -z "$PRITUNL_MONGODB_URI" ]; then
@@ -48,8 +44,7 @@ if [ -z "$PRITUNL_DONT_WRITE_CONFIG" ]; then
         "bind_addr": "$PRITUNL_BIND_ADDR",
         "debug": $PRITUNL_DEBUG,
         "www_path": "/usr/share/pritunl/www",
-        "local_address_interface": "auto",
-        "port": $PRITUNL_PORT
+        "local_address_interface": "auto"
     }
 EOF
 
