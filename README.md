@@ -18,7 +18,8 @@ docker run \
     --privileged \
     -p 1194:1194/udp \
     -p 1194:1194/tcp \
-    -p 9700:9700/tcp \
+    -p 80:80/tcp \
+    -p 443:443/tcp \
     jippi/pritunl
 ```
 
@@ -32,7 +33,8 @@ docker run \
     -e PRITUNL_MONGODB_URI=mongodb://some-mongo-host:27017/pritunl \
     -p 1194:1194/udp \
     -p 1194:1194/tcp \
-    -p 9700:9700/tcp \
+    -p 80:80/tcp \
+    -p 443:443/tcp \
     jippi/pritunl
 ```
 
@@ -75,7 +77,8 @@ docker run \
     -e PRITUNL_MONGODB_URI=mongodb://some-mongo-host:27017/pritunl \
     -p 1194:1194/udp \
     -p 1194:1194/tcp \
-    -p 9700:9700/tcp \
+    -p 80:80/tcp \
+    -p 443:443/tcp \
     jippi/pritunl
 ```
 
