@@ -1,5 +1,7 @@
 # Pritunl as a Docker container
 
+[Docker Hub Releases](https://hub.docker.com/r/jippi/pritunl/)
+
 ## Config (env)
 
 - `PRITUNL_DONT_WRITE_CONFIG` if set, `/etc/pritunl.conf` will not be auto-written on container start.
