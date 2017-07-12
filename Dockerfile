@@ -25,6 +25,7 @@ ADD start-pritunl /bin/start-pritunl
 EXPOSE 80
 EXPOSE 443
 EXPOSE 1194
+EXPOSE 1194/udp
 
 ENTRYPOINT ["/bin/start-pritunl"]
 
