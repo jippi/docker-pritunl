@@ -66,7 +66,7 @@ for tag in $github_tags; do
     # build without mongo (special tag)
     if ! has_tag "${tag}-minimal"; then
         echo "[${tag}-minimal] Building"
-        docker build $DOCKER_ARGS -t "jippi/pritunl:${tag}" --build-arg PRITUNL_VERSION="${tag}" --build-arg MONGODB_VERSION=no .
+        docker build $DOCKER_ARGS -t "jippi/pritunl:${tag}-minimal" --build-arg PRITUNL_VERSION="${tag}" --build-arg MONGODB_VERSION=no .
 
         echo "[${tag}-minimal] Pushing"
         docker push "jippi/pritunl:${tag}-minimal"
