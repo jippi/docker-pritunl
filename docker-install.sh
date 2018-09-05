@@ -27,7 +27,7 @@ if [ "${MONGODB_VERSION}" != "no" ]; then
     apt-get -y install mongodb-org=${MONGODB_VERSION};
 fi
 
-apt-get purge wget
+apt-get --purge autoremove -y wget
 apt-get clean
 apt-get -y -q autoclean
 apt-get -y -q autoremove
