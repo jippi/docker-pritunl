@@ -20,8 +20,7 @@ apt-get upgrade -y -q
 apt-get dist-upgrade -y -q
 
 wget --quiet https://github.com/pritunl/pritunl/releases/download/${PRITUNL_VERSION}/pritunl_${PRITUNL_VERSION}-0ubuntu1.xenial_amd64.deb
-dpkg -i pritunl_${PRITUNL_VERSION}-0ubuntu1.xenial_amd64.deb || exit 0
-apt-get -f install
+dpkg -i pritunl_${PRITUNL_VERSION}-0ubuntu1.xenial_amd64.deb || apt-get -f install
 rm pritunl_${PRITUNL_VERSION}-0ubuntu1.xenial_amd64.deb
 
 if [ "${MONGODB_VERSION}" != "no" ]; then
