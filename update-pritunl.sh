@@ -24,7 +24,7 @@ fi
 # git pull
 
 # docker tags
-docker_tags=$(curl -s 'https://hub.docker.com/v2/repositories/jippi/pritunl/tags/?page_size=100' | jq -r '.results[].name')
+docker_tags=$(curl -s 'https://hub.docker.com/v2/repositories/jippi/pritunl/tags/?page_size=100' | jq -r '.results[].name' | sort -n)
 
 function has_tag() {
     check=$(echo "${docker_tags}" | grep "^$1$")
@@ -36,7 +36,7 @@ function has_tag() {
 }
 
 # find latest tag from github
-github_tags=$(curl -s https://api.github.com/repos/pritunl/pritunl/tags | jq -r '.[].name')
+github_tags=$(curl -s https://api.github.com/repos/pritunl/pritunl/tags | jq -r '.[].name' | sort -n)
 first=1
 for tag in $github_tags; do
     echo "[${tag}] Processing"
