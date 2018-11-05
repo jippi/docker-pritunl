@@ -24,7 +24,7 @@ fi
 # git pull
 
 # docker tags
-docker_tags=$(curl -s https://hub.docker.com/v2/repositories/jippi/pritunl/tags/ | jq -r '.results[].name')
+docker_tags=$(curl -s 'https://hub.docker.com/v2/repositories/jippi/pritunl/tags/?page_size=100' | jq -r '.results[].name')
 
 function has_tag() {
     check=$(echo "${docker_tags}" | grep "^$1$")
