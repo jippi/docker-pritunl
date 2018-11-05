@@ -55,7 +55,13 @@ for tag in $github_tags; do
 
             echo "[${tag}] Pushing as latest"
             docker push "jippi/pritunl:latest"
+
+            echo "[${tag}] Untagging latest"
+            docker rmi "jippi/pritunl:latest"
         fi
+
+        echo "[${tag}] Untagging"
+        docker rmi "jippi/pritunl:${tag}"
 
         echo "[${tag}] Done"
     else
@@ -76,7 +82,13 @@ for tag in $github_tags; do
 
             echo "[${tag}-minimal] Pushing as latest-minimal"
             docker push "jippi/pritunl:latest-minimal"
+
+            echo "[${tag}-minimal] Untagging latest"
+            docker rmi "jippi/pritunl:latest-minimal"
         fi
+
+        echo "[${tag}-minimal] Untagging"
+        docker rmi "jippi/pritunl:${tag}-minimal"
 
         echo "[${tag}-minimal] Done"
     else
@@ -85,3 +97,5 @@ for tag in $github_tags; do
 
     first=0
 done
+
+docker images purge
