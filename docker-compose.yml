@@ -1,12 +1,9 @@
-version: '2'
+version: '3'
 
 services:
   pritunl:
     image: 'jippi/pritunl:latest'
-    labels:
-      kompose.service.type: nodeport
     privileged: true
-    network_mode: host
     ports:
       - '80:80'
       - '443:443'
@@ -15,6 +12,7 @@ services:
     volumes:
       - 'pritunl_data:/var/lib/pritunl'
       - 'pritunl_db:/var/lib/mongodb'
+
 volumes:
   pritunl_data:
     driver: local
