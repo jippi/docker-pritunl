@@ -1,23 +1,23 @@
-FROM ubuntu:16.04
-
-ARG PRITUNL_VERSION="*"
-ENV PRITUNL_VERSION=${PRITUNL_VERSION}
-
-ARG MONGODB_VERSION="*"
-ENV MONGODB_VERSION=${MONGODB_VERSION}
+FROM debian:stretch-slim
 
 LABEL MAINTAINER="Christian Winther <jippignu@gmail.com>"
 
-COPY --chown=root:root ["docker-install.sh", "/root"]
-RUN bash /root/docker-install.sh
+RUN apt-get -y update && \
+    apt-get -y install gnupg2 && \
+    echo "deb http://repo.pritunl.com/stable/apt stretch main" > /etc/apt/sources.list.d/pritunl.list && \
+    echo "deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main" > /etc/apt/sources.list.d/mongodb-org-4.0.list && \
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A && \
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 9DA31620334BD75D9DCB49F368818C72E52529D4 && \
+    apt-get -y update && \
+    apt-get install -y dirmngr curl procps iptables pritunl mongodb-server && \
+    apt-get -y autoremove && \
+    rm -rf /var/lib/apt/lists/*
 
-ADD start-pritunl /bin/start-pritunl
-
-EXPOSE 80
-EXPOSE 443
-EXPOSE 1194
+EXPOSE 80/tcp 443/tcp
 EXPOSE 1194/udp
 
-ENTRYPOINT ["/bin/start-pritunl"]
+COPY docker-entrypoint.sh /docker-entrypoint.sh
 
-CMD ["/usr/bin/tail", "-f","/var/log/pritunl.log"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+CMD ["pritunl", "start"]
