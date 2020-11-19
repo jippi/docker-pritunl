@@ -2,8 +2,11 @@
 set -e
 set -o pipefail
 
+# List of releases to skip
 declare -A SKIP
-SKIP["1.29.2589.95"]=1
+
+# this release do not ship binaries in github releases for some reason
+SKIP[1.29.2589.95]=1
 
 DOCKER_ARGS=""
 DEBUG=${DEBUG:0}
