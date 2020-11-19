@@ -1,7 +1,11 @@
+#!/bin/bash
 set -e
 set -o pipefail
 
-DOCKER_ARGS="--squash"
+declare -A SKIP
+SKIP["1.29.2589.95"]=1
+
+DOCKER_ARGS=""
 DEBUG=${DEBUG:0}
 
 if [ "${DEBUG}" != "1" ]; then
@@ -40,6 +44,11 @@ github_tags=$(curl -s https://api.github.com/repos/pritunl/pritunl/tags | jq -r 
 first=1
 for tag in $github_tags; do
     echo "[${tag}] Processing"
+
+    if [[ ${SKIP[$tag]} ]]; then
+	echo "[${tag}] Skipping ....";
+        continue
+    fi
 
     # build with mongo (default container)
     if ! has_tag "${tag}"; then
