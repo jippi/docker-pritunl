@@ -19,6 +19,8 @@ ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 apt-get upgrade -y -q
 apt-get dist-upgrade -y -q
 
+apt-get -y --no-install-recommends install wireguard
+
 wget --quiet https://github.com/pritunl/pritunl/releases/download/${PRITUNL_VERSION}/pritunl_${PRITUNL_VERSION}-0ubuntu1.xenial_amd64.deb
 dpkg -i pritunl_${PRITUNL_VERSION}-0ubuntu1.xenial_amd64.deb || apt-get -f -y install
 rm pritunl_${PRITUNL_VERSION}-0ubuntu1.xenial_amd64.deb
