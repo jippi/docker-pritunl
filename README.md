@@ -4,7 +4,8 @@
 
 ## Config (env)
 
-- `PRITUNL_DONT_WRITE_CONFIG` if set, `/etc/pritunl.conf` will not be auto-written on container start.
+- `PRITUNL_CONFIG_FILE` set the location of the pritunl config file. Defaults to `/etc/pritunl.conf`.
+- `PRITUNL_DONT_WRITE_CONFIG` if set, the pritunl config file set by `PRITUNL_CONFIG_FILE` will not be auto-written on container start.
 - `PRITUNL_DEBUG` must be `true` or `false` - controls the `debug` config key.
 - `PRITUNL_BIND_ADDR` must be a valid IP on the host - defaults to `0.0.0.0` - controls the `bind_addr` config key.
 - `PRITUNL_MONGODB_URI` URI to mongodb instance, default is starting a local mongodb instance in the container and use that.
