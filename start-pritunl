@@ -15,6 +15,7 @@ if [ "$1" = "bash" ]; then
     exit $?
 fi
 
+# allow changing config file location
 if [ -z "$PRITUNL_CONFIG_FILE" ]; then
     PRITUNL_CONFIG_FILE="/etc/pritunl.conf"
 fi
