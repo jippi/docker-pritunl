@@ -44,7 +44,11 @@ function has_tag() {
 
 # find latest tag from github
 github_tags=$(curl -s https://api.github.com/repos/pritunl/pritunl/tags | jq -r '.[].name' | sort -n)
-first=1
+latest_tag=$(echo "${github_tags}" | tail -1)
+
+echo "[INFO] github tags: $(echo $github_tags | xargs)"
+echo "[INFO] latest tag will be ${latest_tag}"
+
 for tag in $github_tags; do
     echo "[${tag}] Processing"
 
@@ -61,7 +65,7 @@ for tag in $github_tags; do
         echo "[${tag}] Pushing"
         docker push "jippi/pritunl:${tag}"
 
-        if [ $first -eq 1 ]; then
+        if [ "${tag}" == "${latest_tag}" ]; then
             echo "[${tag}] Tagging as latest"
             docker tag "jippi/pritunl:${tag}" "jippi/pritunl:latest"
 
@@ -88,7 +92,7 @@ for tag in $github_tags; do
         echo "[${tag}-minimal] Pushing"
         docker push "jippi/pritunl:${tag}-minimal"
 
-        if [ $first -eq 1 ]; then
+        if [ "${tag}" == "${latest_tag}" ]; then
             echo "[${tag}-minimal] Tagging as latest-minimal"
             docker tag "jippi/pritunl:${tag}-minimal" "jippi/pritunl:latest-minimal"
 
