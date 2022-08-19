@@ -11,16 +11,16 @@ All images are published to the following registries
 Image tags with the specifications and version information can be found in the table below
 
 
-| **Tag**                   | **Version**                                                                 | **OS**                  | **MongoDB?**           | **Wireguard**             | **size**        |
+| **Tag**                   | **Version**                                                                 | **OS (Ubuntu)**         | **MongoDB**            | **Wireguard**             | **Size**        |
 |-------------------------- |---------------------------------------------------------------------------- |-----------------------  |:---------------------: |:------------------------: |---------------- |
-| `latest`                  | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Ubuntu Bionic (18.04)   |        ✅ (4.4)         |            ✅             | ~390 MB         |
-| `latest-minimal`          | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Ubuntu Bionic (18.04)   |           ❌            |            ✅             | ~190 MB         |
-| `latest-focal`            | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Ubuntu Focal (20.04)    |        ✅ (5.x)         |            ✅             | ~390 MB         |
-| `latest-focal-minimal`    | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Ubuntu Focal (20.04)    |           ❌            |            ✅             | ~190 MB         |
-| `$version`                | `$version`                                                                  | Ubuntu Bionic (18.04)   |        ✅ (4.4)         |            ✅             | ~390 MB         |
-| `$version-minimal`        | `$version`                                                                  | Ubuntu Bionic (18.04)   |           ❌            |            ✅             | ~190 MB         |
-| `$version-focal`          | `$version`                                                                  | Ubuntu Focal (20.04)    |        ✅ (5.x)         |            ✅             | ~390 MB         |
-| `$version-focal-minimal`  | `$version`                                                                  | Ubuntu Focal (20.04)    |           ❌            |            ✅             | ~190 MB         |
+| `latest`                  | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Bionic (18.04)          |        ✅ (4.4)         |            ✅             | ~390 MB         |
+| `latest-minimal`          | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Bionic (18.04)          |           ❌            |            ✅             | ~190 MB         |
+| `latest-focal`            | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Focal (20.04)           |        ✅ (5.x)         |            ✅             | ~390 MB         |
+| `latest-focal-minimal`    | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Focal (20.04)           |           ❌            |            ✅             | ~190 MB         |
+| `$version`                | `$version`                                                                  | Bionic (18.04)          |        ✅ (4.4)         |            ✅             | ~390 MB         |
+| `$version-minimal`        | `$version`                                                                  | Bionic (18.04)          |           ❌            |            ✅             | ~190 MB         |
+| `$version-focal`          | `$version`                                                                  | Focal (20.04)           |        ✅ (5.x)         |            ✅             | ~390 MB         |
+| `$version-focal-minimal`  | `$version`                                                                  | Focal (20.04)           |           ❌            |            ✅             | ~190 MB         |
 
 _† Automation checks for new Pritunl releases nightly (CEST, ~3am), so there might be a day or two latency for most recent release_
 
