@@ -11,8 +11,8 @@ All images are published to the following registries
 Image tags with the specifications and version information can be found in the table below
 
 
-| **Tag**                   | **Pritunl Version**                                                         | **Operating System**    | **MongoDB included?**  | **Wireguard installed**  | **Image size**  |
-|-------------------------- |---------------------------------------------------------------------------- |-----------------------  |:---------------------: |:-----------------------: |---------------- |
+| **Tag**                   | **Version**                                                                 | **OS**                  | **MongoDB?**           | **Wireguard**             | **size**        |
+|-------------------------- |---------------------------------------------------------------------------- |-----------------------  |:---------------------: |:------------------------: |---------------- |
 | `latest`                  | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Ubuntu Bionic (18.04)   |        ✅ (4.4)         |            ✅             | ~390 MB         |
 | `latest-minimal`          | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Ubuntu Bionic (18.04)   |           ❌            |            ✅             | ~190 MB         |
 | `latest-focal`            | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Ubuntu Focal (20.04)    |        ✅ (5.x)         |            ✅             | ~390 MB         |
