@@ -1,6 +1,6 @@
 # Pritunl as a Docker container
 
-
+> Pritunl is the best open source alternative to proprietary commercial vpn products such as Aviatrix and Pulse Secure. Create larger cloud vpn networks supporting thousands of concurrent users and get more control over your vpn server without any per-user pricing.
 
 ## Images
 
