@@ -13,10 +13,10 @@ Image tags with the specifications and version information can be found in the t
 
 | **Tag**                   | **Pritunl Version**                                                         | **Operating System**    | **MongoDB included?**  | **Wireguard installed**  | **Image size**  |
 |-------------------------- |---------------------------------------------------------------------------- |-----------------------  |:---------------------: |:-----------------------: |---------------- |
-| `latest`                  | [Most recent release †](https://github.com/pritunl/pritunl/releases/latest) | Ubuntu Bionic (18.04)   |        ✅ (4.4)         |            ✅             | ~390 MB         |
-| `latest-minimal`          | [Most recent release †](https://github.com/pritunl/pritunl/releases/latest) | Ubuntu Bionic (18.04)   |           ❌            |            ✅             | ~190 MB         |
-| `latest-focal`            | [Most recent release †](https://github.com/pritunl/pritunl/releases/latest) | Ubuntu Focal (20.04)    |        ✅ (5.x)         |            ✅             | ~390 MB         |
-| `latest-focal-minimal`    | [Most recent release †](https://github.com/pritunl/pritunl/releases/latest) | Ubuntu Focal (20.04)    |           ❌            |            ✅             | ~190 MB         |
+| `latest`                  | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Ubuntu Bionic (18.04)   |        ✅ (4.4)         |            ✅             | ~390 MB         |
+| `latest-minimal`          | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Ubuntu Bionic (18.04)   |           ❌            |            ✅             | ~190 MB         |
+| `latest-focal`            | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Ubuntu Focal (20.04)    |        ✅ (5.x)         |            ✅             | ~390 MB         |
+| `latest-focal-minimal`    | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Ubuntu Focal (20.04)    |           ❌            |            ✅             | ~190 MB         |
 | `$version`                | `$version`                                                                  | Ubuntu Bionic (18.04)   |        ✅ (4.4)         |            ✅             | ~390 MB         |
 | `$version-minimal`        | `$version`                                                                  | Ubuntu Bionic (18.04)   |           ❌            |            ✅             | ~190 MB         |
 | `$version-focal`          | `$version`                                                                  | Ubuntu Focal (20.04)    |        ✅ (5.x)         |            ✅             | ~390 MB         |
