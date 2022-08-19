@@ -1,10 +1,12 @@
 # Pritunl as a Docker container
 
+
+
 ## Images
 
 All images are published to the following registries
 
-* [GitHub container registry](https://github.com/jippi/docker-pritunl/pkgs/container/docker-pritunl) as `ghcr.io/jippi/docker-pritunl`
+* [GitHub container registry](https://github.com/jippi/docker-pritunl/pkgs/container/docker-pritunl) as `ghcr.io/jippi/docker-pritunl` (**Recommended**)
 * [Amazon Web Services registry](https://gallery.ecr.aws/i2s8u4z7/pritunl) as `public.ecr.aws/i2s8u4z7/pritunl`
 * [Docker Hub](https://hub.docker.com/r/jippi/pritunl/) as `jippi/docker-pritunl`
 
@@ -54,7 +56,7 @@ docker run \
     --volume $(data_dir)/pritunl.conf:/etc/pritunl.conf \
     --volume $(data_dir)/pritunl:/var/lib/pritunl \
     --volume $(data_dir)/mongodb:/var/lib/mongodb \
-    jippi/docker-pritunl
+    ghcr.io/jippi/docker-pritunl
 ```
 
 ### docker-compose (with mongo)
@@ -73,7 +75,7 @@ version: '3.3'
 services:
     pritunl:
         container_name: pritunl
-        image: jippi/docker-pritunl
+        image: ghcr.io/jippi/docker-pritunl
         restart: unless-stopped
         privileged: true
         network_mode: host
@@ -109,7 +111,7 @@ docker run \
     --volume $(data_dir)/pritunl.conf:/etc/pritunl.conf \
     --volume $(data_dir)/pritunl:/var/lib/pritunl \
     --env PRITUNL_MONGODB_URI=mongodb://some-mongo-host:27017/pritunl \
-    jippi/docker-pritunl
+    ghcr.io/jippi/docker-pritunl
 ```
 
 ### docker-compose (without mongo)
@@ -128,7 +130,7 @@ version: '3.3'
 services:
     pritunl:
         container_name: pritunl
-        image: jippi/docker-pritunl
+        image: ghcr.io/jippi/docker-pritunl
         restart: unless-stopped
         privileged: true
         network_mode: host
