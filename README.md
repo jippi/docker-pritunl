@@ -32,15 +32,17 @@ Configuration settings that can be used via `--env` / `-e` CLI flag in `docker r
 * `PRITUNL_BIND_ADDR` must be a valid IP on the host - defaults to `0.0.0.0` - controls the `bind_addr` config key.
 * `PRITUNL_MONGODB_URI` URI to mongodb instance, default is starting a local MongoDB instance inside the container. _Any_ value will stop this behavior.
 
-## Usage
+## Usage with embedded MongoDB
 
-I would recommend using a Docker `volume` or `bind` mount for persistent data like shown below
+I would recommend using a Docker `volume` or `bind` mount for persistent data like shown in the examples below
+
+### docker run (with mongo)
 
 ```sh
-base_dir=$(pwd)
+data_dir=$(pwd)/data
 
-mkdir -p $(base_dir)/data/pritunl $(base_dir)/data/mongodb
-touch $(base_dir)/data/pritunl.conf
+mkdir -p $(data_dir)/pritunl $(data_dir)/mongodb
+touch $(data_dir)/pritunl.conf
 
 docker run \
     --name pritunl \
@@ -49,19 +51,53 @@ docker run \
     --dns 127.0.0.1 \
     --restart=unless-stopped \
     --detach \
-    --volume $(base_dir)/data/pritunl.conf:/etc/pritunl.conf \
-    --volume $(base_dir)/data/pritunl:/var/lib/pritunl \
-    --volume $(base_dir)/data/mongodb:/var/lib/mongodb \
+    --volume $(data_dir)/pritunl.conf:/etc/pritunl.conf \
+    --volume $(data_dir)/pritunl:/var/lib/pritunl \
+    --volume $(data_dir)/mongodb:/var/lib/mongodb \
     jippi/docker-pritunl
 ```
 
-If you have MongoDB running somewhere else you'd like to use, you can do so through the `PRITUNL_MONGODB_URI` env var like this:
+### docker-compose (with mongo)
 
 ```sh
-base_dir=$(pwd)
+data_dir=$(pwd)/data
 
-mkdir -p $(base_dir)/data/pritunl
-touch $(base_dir)/data/pritunl.conf
+mkdir -p $(data_dir)/pritunl $(data_dir)/mongodb
+touch $(data_dir)/pritunl.conf
+```
+
+and then the following `docker-compose.yaml` file in `$(pwd)` followed by `docker-compose up -d`
+
+```yaml
+version: '3.3'
+services:
+    pritunl:
+        container_name: pritunl
+        image: jippi/docker-pritunl
+        restart: unless-stopped
+        privileged: true
+        network_mode: host
+        dns:
+            - 127.0.0.1
+        volumes:
+            - './data/pritunl.conf:/etc/pritunl.conf'
+            - './data/pritunl:/var/lib/pritunl'
+            - './data/mongodb:/var/lib/mongodb'
+```
+
+## Usage without embedded MongoDB
+
+I would recommend using a Docker `volume` or `bind` mount for persistent data like shown in the examples below
+
+If you have MongoDB running somewhere else you'd like to use, you can do so through the `PRITUNL_MONGODB_URI` env var like shown below
+
+### docker run (without mongo)
+
+```sh
+data_dir=$(pwd)/data
+
+mkdir -p $(data_dir)/pritunl
+touch $(data_dir)/pritunl.conf
 
 docker run \
     --name pritunl \
@@ -70,11 +106,42 @@ docker run \
     --dns 127.0.0.1 \
     --restart=unless-stopped \
     --detach \
-    --volume $(base_dir)/data/pritunl.conf:/etc/pritunl.conf \
-    --volume $(base_dir)/data/pritunl:/var/lib/pritunl \
+    --volume $(data_dir)/pritunl.conf:/etc/pritunl.conf \
+    --volume $(data_dir)/pritunl:/var/lib/pritunl \
     --env PRITUNL_MONGODB_URI=mongodb://some-mongo-host:27017/pritunl \
     jippi/docker-pritunl
 ```
+
+### docker-compose (without mongo)
+
+```sh
+data_dir=$(pwd)/data
+
+mkdir -p $(data_dir)/pritunl
+touch $(data_dir)/pritunl.conf
+```
+
+and then the following `docker-compose.yaml` file in `$(pwd)` followed by `docker-compose up -d`
+
+```yaml
+version: '3.3'
+services:
+    pritunl:
+        container_name: pritunl
+        image: jippi/docker-pritunl
+        restart: unless-stopped
+        privileged: true
+        network_mode: host
+        dns:
+            - 127.0.0.1
+        environment:
+            - PRITUNL_MONGODB_URI=mongodb://some-mongo-host:27017/pritunl
+        volumes:
+            - './data/pritunl.conf:/etc/pritunl.conf'
+            - './data/pritunl:/var/lib/pritunl'
+```
+
+## Network mode
 
 If you don't want to use `network=host`, then replace the `--network=host` CLI flag with the following ports + any ports you need for your configured Pritunl servers.
 
