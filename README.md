@@ -8,7 +8,7 @@ All images are published to the following registries
 
 * 🥇 [GitHub](https://github.com/jippi/docker-pritunl/pkgs/container/docker-pritunl) as `ghcr.io/jippi/docker-pritunl` <-- **Recommended**
 * 🥈 [AWS](https://gallery.ecr.aws/i2s8u4z7/pritunl) as `public.ecr.aws/i2s8u4z7/pritunl` <-- Great alternative
-* 🥉 [Docker Hub](https://hub.docker.com/r/jippi/pritunl/) as `jippi/docker-pritunl` <-- Please don't use it unless you only use `:latest` as [tags might disappear after 6 months](https://www.docker.com/blog/scaling-dockers-business-to-serve-millions-more-developers-storage/)
+* 🥉 [Docker Hub](https://hub.docker.com/r/jippi/pritunl/) as `jippi/docker-pritunl` <-- Please don't use it unless you only use `:latest` as [tags might disappear](https://www.docker.com/blog/scaling-dockers-business-to-serve-millions-more-developers-storage/)
 
 Image tags with the specifications and version information can be found in the table below
 
