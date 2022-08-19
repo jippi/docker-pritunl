@@ -152,6 +152,16 @@ If you don't want to use `network=host`, then replace the `--network=host` CLI f
     --publish 1194:1194/udp \
 ```
 
+or for `docker-compose`
+
+```yaml
+         ports:
+            - '80:80'
+            - '443:443'
+            - '1194:1194'
+            - '1194:1194/udp'
+```
+
 ## Further help and docs
 
 For any help specific to Pritunl please have a look at http://pritunl.com and https://github.com/pritunl/pritunl
