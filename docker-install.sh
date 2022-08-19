@@ -1,37 +1,62 @@
+#!/bin/bash
+
 set -ex
 
-apt-get update -q
-apt-get install -y gnupg wget
+. /etc/lsb-release
 
-if [ "${MONGODB_VERSION}" != "no" ]; then
-    wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
-    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
-fi
+# command shortcuts
+APT_UPDATE="apt-get update --quiet"
+APT_INSTALL="apt-get install --no-install-recommends --yes"
+WGET="wget --quiet"
 
-echo 'deb http://repo.pritunl.com/stable/apt bionic main' > /etc/apt/sources.list.d/pritunl.list
-echo "deb http://build.openvpn.net/debian/openvpn/stable bionic main" > /etc/apt/sources.list.d/openvpn-aptrepo.list
+# keep APT packages so buildkit can cache them instead
+rm -f /etc/apt/apt.conf.d/docker-clean
 
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 8E6DA8B4E158C569
+# install basic packages needed
+$APT_UPDATE
+$APT_INSTALL wget gnupg ca-certificates
 
-apt-get update -q
-apt-get install -y locales iptables wget
-locale-gen en_US en_US.UTF-8
-dpkg-reconfigure locales
+# setup pritunl apt repo
+echo "deb http://repo.pritunl.com/stable/apt ${DISTRIB_CODENAME} main" > /etc/apt/sources.list.d/pritunl.list
+apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7AE645C0CF8E292A
+
+# configure timezone to be UTC by default
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
-apt-get upgrade -y -q
-apt-get dist-upgrade -y -q
 
-wget --quiet https://github.com/pritunl/pritunl/releases/download/${PRITUNL_VERSION}/pritunl_${PRITUNL_VERSION}-0ubuntu1.bionic_amd64.deb
-dpkg -i pritunl_${PRITUNL_VERSION}-0ubuntu1.bionic_amd64.deb || apt-get -f -y install
-rm pritunl_${PRITUNL_VERSION}-0ubuntu1.bionic_amd64.deb
+# install mongo in the container
+if [ "${MONGODB_VERSION}" != "no" ]
+then
+    MONGODB_VERSION=4.4
+    MONGODB_INSTALL_VERSION="4.4.*"
 
-if [ "${MONGODB_VERSION}" != "no" ]; then
-    apt-get -y install mongodb-org=${MONGODB_VERSION};
+    # use modern mongo for non bionic
+    if [ "${DISTRIB_CODENAME}" != "bionic" ]
+    then
+        MONGODB_VERSION=5.0
+        MONGODB_INSTALL_VERSION="*"
+    fi
+
+    $WGET --output-document=- https://www.mongodb.org/static/pgp/server-${MONGODB_VERSION}.asc | apt-key add -
+    echo "deb [arch=amd64,arm64] https://repo.mongodb.org/apt/ubuntu ${DISTRIB_CODENAME}/mongodb-org/${MONGODB_VERSION} multiverse" | tee /etc/apt/sources.list.d/mongodb-org-${MONGODB_VERSION}.list
+
+    $APT_UPDATE
+    $APT_INSTALL mongodb-org="${MONGODB_INSTALL_VERSION}"
+else
+    $APT_UPDATE
 fi
 
-apt-get --purge autoremove -y wget
-apt-get clean
-apt-get -y -q autoclean
-apt-get -y -q autoremove
-rm -rf /tmp/*
+pritunl_deb_file="/pritunl/cache/pritunl_${PRITUNL_VERSION}-0ubuntu1.${DISTRIB_CODENAME}_amd64.deb"
+if [ ! -e "${pritunl_deb_file}" ]
+then
+    echo "Downloading pritunl deb file to ${pritunl_deb_file}"
+    $WGET --output-document="${pritunl_deb_file}" "https://github.com/pritunl/pritunl/releases/download/${PRITUNL_VERSION}/pritunl_${PRITUNL_VERSION}-0ubuntu1.${DISTRIB_CODENAME}_amd64.deb"
+else
+    echo "OK! pritunl deb file already exsist in ${pritunl_deb_file}"
+fi
+
+$APT_INSTALL $pritunl_deb_file wireguard wireguard-tools
+
+rm -rf \
+    /tmp/* \
+    /var/log/pritunl.log \
+    /var/log/mongodb/mongod.log

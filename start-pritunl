@@ -1,14 +1,11 @@
 #!/bin/sh
 set -e
 
-[ -d /dev/net ] ||
-    mkdir -p /dev/net
-[ -c /dev/net/tun ] ||
-    mknod /dev/net/tun c 10 200
+[ -d /dev/net ] || mkdir -p /dev/net
+[ -c /dev/net/tun ] || mknod /dev/net/tun c 10 200
 
 touch /var/log/pritunl.log
 touch /var/run/pritunl.pid
-/bin/rm /var/run/pritunl.pid
 
 if [ "$1" = "bash" ]; then
     exec "$@"
@@ -25,11 +22,10 @@ if [ -z "$PRITUNL_BIND_ADDR" ]; then
     PRITUNL_BIND_ADDR="0.0.0.0"
 fi
 
-
 ## start a local mongodb instance if no mongodb specified through env
 if [ -z "$PRITUNL_MONGODB_URI" ]; then
-  /usr/bin/mongod -f /etc/mongod.conf &
-  PRITUNL_MONGODB_URI="mongodb://localhost:27017/pritunl"
+    /usr/bin/mongod -f /etc/mongod.conf &
+    PRITUNL_MONGODB_URI="mongodb://localhost:27017/pritunl"
 fi
 
 if [ -z "$PRITUNL_DONT_WRITE_CONFIG" ]; then

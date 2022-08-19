@@ -1,117 +1,121 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 set -e
 set -o pipefail
 
-# List of releases to skip
-declare -A SKIP
+MAIN_LOADED=1
+OUTPUT_PREFIX="[boot] "
 
-# this release do not ship binaries in github releases for some reason
-SKIP[1.29.2589.95]=1
+########################################################################
+# Load libraries
+########################################################################
 
-DOCKER_ARGS=""
-DEBUG=${DEBUG:0}
+source update-pritunl-bootstrap.sh
 
-if [ "${DEBUG}" != "1" ]; then
-    DOCKER_ARGS="$DOCKER_ARGS --quiet"
-fi
+load_file ./update-pritunl-config.sh
+load_file ./update-pritunl-setup.sh
 
-if [ "${DEBUG}" == "1" ]; then
-    set -x
-fi
+########################################################################
+# Build docker images
+########################################################################
 
-# ensure checkout directory exist
-if [ ! -d "/tmp/docker-pritunl" ]; then
-    git clone https://github.com/jippi/docker-pritunl.git /tmp/docker-pritunl
-fi
+debug "github tags: $(echo $pritunl_releases | xargs)"
+debug "latest tag will be ${latest_release}"
 
-# change work dir
-# cd /tmp/docker-pritunl/
+for pritunl_release in $pritunl_releases
+do
+    OUTPUT_PREFIX="[${pritunl_release}/default]"
 
-# update repo
-# git pull
-
-# docker tags
-docker_tags=$(curl -s 'https://hub.docker.com/v2/repositories/jippi/pritunl/tags/?page_size=100' | jq -r '.results[].name' | sort -n)
-
-function has_tag() {
-    check=$(echo "${docker_tags}" | grep "^$1$")
-    if [ "${check}" == "" ]; then
-        return 1
-    else
-        return 0
-    fi
-}
-
-# find latest tag from github
-github_tags=$(curl -s https://api.github.com/repos/pritunl/pritunl/tags | jq -r '.[].name' | sort -n)
-latest_tag=$(echo "${github_tags}" | tail -1)
-
-echo "[INFO] github tags: $(echo $github_tags | xargs)"
-echo "[INFO] latest tag will be ${latest_tag}"
-
-for tag in $github_tags; do
-    echo "[${tag}] Processing"
-
-    if [[ ${SKIP[$tag]} ]]; then
-	echo "[${tag}] Skipping ....";
+    debug "Considering release"
+    if [[ " ${SKIP[*]} " =~ " ${pritunl_release} " ]]
+    then
+        print "Skipping ....";
         continue
     fi
 
-    # build with mongo (default container)
-    if ! has_tag "${tag}"; then
-        echo "[${tag}] Building"
-        docker build $DOCKER_ARGS -t "jippi/pritunl:${tag}" --build-arg PRITUNL_VERSION="${tag}" .
+    # loop over ubuntu releases we support
+    for ubuntu_release in bionic focal
+    do
+        tag=${pritunl_release}
+        suffix=""
 
-        echo "[${tag}] Pushing"
-        docker push "jippi/pritunl:${tag}"
-
-        if [ "${tag}" == "${latest_tag}" ]; then
-            echo "[${tag}] Tagging as latest"
-            docker tag "jippi/pritunl:${tag}" "jippi/pritunl:latest"
-
-            echo "[${tag}] Pushing as latest"
-            docker push "jippi/pritunl:latest"
-
-            echo "[${tag}] Untagging latest"
-            docker rmi "jippi/pritunl:latest"
+        # change docker tag if we're not building bionic
+        if [ "${ubuntu_release}" != "bionic" ]; then
+            suffix="-${ubuntu_release}"
+            tag="${tag}${suffix}"
         fi
 
-        echo "[${tag}] Untagging"
-        docker rmi "jippi/pritunl:${tag}"
+        OUTPUT_PREFIX="[${pritunl_release}/${ubuntu_release}/default]"
+        debug "👷 Processing"
 
-        echo "[${tag}] Done"
-    else
-        echo "[${tag}] Already build"
-    fi
+        ####################################################################################
+        # build with mongo (default container)
+        ####################################################################################
 
-    # build without mongo (special tag)
-    if ! has_tag "${tag}-minimal"; then
-        echo "[${tag}-minimal] Building"
-        docker build $DOCKER_ARGS -t "jippi/pritunl:${tag}-minimal" --build-arg PRITUNL_VERSION="${tag}" --build-arg MONGODB_VERSION=no .
+        if ! has_tag $tag
+        then
+            docker_args_reset
+            docker_args_append_build_flags $pritunl_release $ubuntu_release
+            docker_args_append_tag_flags $tag
 
-        echo "[${tag}-minimal] Pushing"
-        docker push "jippi/pritunl:${tag}-minimal"
+            if [ "${pritunl_release}" == "${latest_release}" ]
+            then
+                OUTPUT_PREFIX="[${pritunl_release}/${ubuntu_release}/default/latest]"
 
-        if [ "${tag}" == "${latest_tag}" ]; then
-            echo "[${tag}-minimal] Tagging as latest-minimal"
-            docker tag "jippi/pritunl:${tag}-minimal" "jippi/pritunl:latest-minimal"
+                print "🏷️  Tagging as latest"
+                docker_args_append_tag_flags "latest${suffix}"
+            fi
 
-            echo "[${tag}-minimal] Pushing as latest-minimal"
-            docker push "jippi/pritunl:latest-minimal"
-
-            echo "[${tag}-minimal] Untagging latest"
-            docker rmi "jippi/pritunl:latest-minimal"
+            print "🚧 Building container image"
+            docker buildx build $DOCKER_ARGS .
+            print "✅ Done"
+        else
+            print "✅ Already build"
         fi
 
-        echo "[${tag}-minimal] Untagging"
-        docker rmi "jippi/pritunl:${tag}-minimal"
+        ####################################################################################
+        # build without mongo ("minimal" tag)
+        ####################################################################################
 
-        echo "[${tag}-minimal] Done"
-    else
-        echo "[${tag}-minimal] Already build"
-    fi
+        OUTPUT_PREFIX="[${pritunl_release}/${ubuntu_release}/minimal]"
+        debug "👷 Processing"
 
-    first=0
+        tag+="-minimal"
+
+        if ! has_tag $tag
+        then
+            docker_args_reset
+            docker_args_append_build_flags $pritunl_release $ubuntu_release
+            docker_args_append_tag_flags $tag
+
+            if [ "${pritunl_release}" == "${latest_release}" ]
+            then
+                OUTPUT_PREFIX="[${pritunl_release}/${ubuntu_release}/minimal/latest]"
+                print "🏷️ Tagging as latest"
+                docker_args_append_tag_flags "latest${suffix}-minimal"
+            fi
+
+            debug "Building with tags: [${DOCKER_ARGS}]"
+
+            print "🚧 Building container image"
+            docker buildx build ${DOCKER_ARGS} --build-arg=MONGODB_VERSION=no .
+            print "✅ Done"
+        else
+            print "✅ Already build"
+        fi
+    done
 done
 
-docker images purge
+if [ "$DEBUG" != "0" ]
+then
+    debug_complete "Not flushing caches in debug mode"
+    exit 0
+fi
+
+print "🚧 Pruning buildx caches"
+docker buildx prune --all --force --builder $DOCKER_BUILDX_NAME
+print "✅ Done"
+
+print "🚧 Pruning buildx exports"
+rm -rf -v "${DOCKER_CACHE_FOLDER}"
+print "✅ Done"
