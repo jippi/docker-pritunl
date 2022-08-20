@@ -44,8 +44,6 @@ function require_main() {
 }
 
 function has_tag() {
-    return 1
-
     check=$(echo "${DOCKER_TAGS}" | grep "^$1$")
     if [ "${check}" == "" ]; then
         return 1
