@@ -198,17 +198,17 @@ vi mongo-upgrade.sh
 
 ### Manual upgrade
 
-Assuming you are coming from `3.2`, your next version is `3.6` so you need to set `$NEXT_VERSION_TO_UPGRADE_TO=3.6` and run these commands. You can see the versions you would need to run the script for above.
+Assuming you are coming from `3.2`, your next version is `3.6` so you need to set `$NEXT_VERSION_TO_UPGRADE_TO=3.6` and run these commands.
 
-Path from 3.2 to 4.4 would be the following:
+You can see the list of versions you would need to run with the script above.
+
+Example path from `3.2` to `4.4` would mean running the script once per `NEXT_VERSION_TO_UPGRADE_TO` with the values below
 
 * `NEXT_VERSION_TO_UPGRADE_TO=3.2`
 * `NEXT_VERSION_TO_UPGRADE_TO=3.6`
 * `NEXT_VERSION_TO_UPGRADE_TO=4.0`
 * `NEXT_VERSION_TO_UPGRADE_TO=4.2`
 * `NEXT_VERSION_TO_UPGRADE_TO=4.4`
-
-Run this script for each version above
 
 ```sh
 NEXT_VERSION_TO_UPGRADE_TO=
