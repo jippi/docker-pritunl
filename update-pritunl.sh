@@ -118,9 +118,14 @@ print "✅ Done"
 
 if [ -d "${DOCKER_CACHE_FOLDER}" ]
 then
-    print "🚧 Pruning buildx exports"
-    rm -rf -v "${DOCKER_CACHE_FOLDER}"
-    print "✅ Done"
+    if [ -d "${DOCKER_CACHE_FOLDER}/ingest" ]
+    then
+        print "🚧 Pruning buildx exports"
+        rm -rf -v "${DOCKER_CACHE_FOLDER}"
+        print "✅ Done"
+    else
+        print "❌ \$DOCKER_CACHE_FOLDER [$DOCKER_CACHE_FOLDER] does not have an /ingest subfolder, might not be a cache folder after all?"
+    fi
 else
-    print "❌ \$DOCKER_CACHE_FOLDER value [$DOCKER_CACHE_FOLDER] is not a directory"
+    print "❌ \$DOCKER_CACHE_FOLDER [$DOCKER_CACHE_FOLDER] is not a directory"
 fi
