@@ -164,6 +164,76 @@ or for `docker-compose`
             - '1194:1194/udp'
 ```
 
+## Upgrading MongoDB
+
+**IMPORTANT**: Stop your `pritunl` docker container (`docker stop pritunl`) before doing these steps
+
+The pattern for upgrading are basically the same, with the only variance being the MongoDB version number, the docs can be found here:
+
+* [Upgrade from 3.2 to 3.6](https://www.mongodb.com/docs/manual/release-notes/3.6-upgrade-standalone/#prerequisites)
+* [Upgrade from 3.6 to 4.0](https://www.mongodb.com/docs/manual/release-notes/4.0-upgrade-standalone/#prerequisites)
+* [Upgrade from 4.0 to 4.2](https://www.mongodb.com/docs/manual/release-notes/4.2-upgrade-standalone/#prerequisites)
+* [Upgrade from 4.2 to 4.4](https://www.mongodb.com/docs/manual/release-notes/4.4-upgrade-standalone/#prerequisites) <- stop here if you use `Bionic (18.04)`
+* [Upgrade from 4.4 to 5.0](https://www.mongodb.com/docs/manual/release-notes/5.0-upgrade-standalone/#prerequisites) <- stop here if you use `Focal (20.04)`
+
+### Automated script
+
+I've made a small script called [mongo-upgrade.sh](https://github.com/jippi/docker-pritunl/blob/master/mongo-upgrade.sh) that you can download to your server and run. It will make an best-effort to guide you through the steps needed to upgrade.
+
+```sh
+# fetch the script
+wget -O mongo-upgrade.sh https://raw.githubusercontent.com/jippi/docker-pritunl/master/mongo-upgrade.sh
+# make it executable
+chmod +x mongo-upgrade.sh
+# edit settings
+vi mongo-upgrade.sh
+# run
+./mongo-upgrade.sh
+```
+
+### Manual upgrade
+
+Assuming you are coming from `3.2`, your next version is `3.6` so you need to set `$NEXT_VERSION_TO_UPGRADE_TO=3.6` and run these commands. You can see the versions you would need to run the script for above.
+
+Path from 3.2 to 4.4 would be the following:
+
+* `NEXT_VERSION_TO_UPGRADE_TO=3.2`
+* `NEXT_VERSION_TO_UPGRADE_TO=3.6`
+* `NEXT_VERSION_TO_UPGRADE_TO=4.0`
+* `NEXT_VERSION_TO_UPGRADE_TO=4.2`
+* `NEXT_VERSION_TO_UPGRADE_TO=4.4`
+
+Run this script for each version above
+
+```sh
+NEXT_VERSION_TO_UPGRADE_TO=
+MONGODB_DATA_PATH=$PATH_TO_YOUR_MONGODB_DB_FOLDER # must point to the directory where files like `mongod.lock` and `journal/` are on disk.
+
+# Start MongoDB server
+docker run -d --name temp-mongo-server --rm -it -v ${MONGODB_DATA_PATH}:/data/db mongo:${NEXT_VERSION_TO_UPGRADE_TO}
+
+# Wait for server to start
+sleep 5
+
+# change setFeatureCompatibilityVersion to current version
+docker exec temp-mongo-server mongo admin --quiet --eval "db.adminCommand( { setFeatureCompatibilityVersion: \"${NEXT_VERSION_TO_UPGRADE_TO}\" } );"
+
+# stop the server gracefully
+docker exec -it temp-mongo-server mongo admin --quiet --eval "db.shutdownServer()"
+
+# Wait for the server to stop
+sleep 5
+
+# make sure container is stopped
+docker stop temp-mongo-server
+
+# remove container
+docker rm -f temp-mongo-server
+
+# repair / upgrade data
+docker run --rm --volume ${MONGODB_DATA_PATH}:/data/db mongo:${NEXT_VERSION_TO_UPGRADE_TO} --repair
+```
+
 ## Further help and docs
 
 For any help specific to Pritunl please have a look at http://pritunl.com and https://github.com/pritunl/pritunl
