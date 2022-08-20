@@ -4,16 +4,17 @@ set -e
 set -o pipefail
 
 MAIN_LOADED=1
+ROOT_PATH="$( dirname -- "$0"; )";
 OUTPUT_PREFIX="[boot] "
 
 ########################################################################
 # Load libraries
 ########################################################################
 
-source update-pritunl-bootstrap.sh
+source "${ROOT_PATH}/update-pritunl-bootstrap.sh"
 
-load_file ./update-pritunl-config.sh
-load_file ./update-pritunl-setup.sh
+load_file update-pritunl-config.sh
+load_file update-pritunl-setup.sh
 
 ########################################################################
 # Build docker images

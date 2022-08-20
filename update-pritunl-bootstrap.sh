@@ -5,7 +5,7 @@ fi
 
 DEBUG=${DEBUG:0}
 
-if [ "${DEBUG}" -gt "1" ]; then
+if [[ "${DEBUG}" -gt "1" ]]; then
     set -x
 fi
 
@@ -14,7 +14,7 @@ function print() {
 }
 
 function debug() {
-    if [ "${DEBUG}" -gt "0" ]; then
+    if [[ "${DEBUG}" -gt "0" ]]; then
         echo $OUTPUT_PREFIX $@
     fi
 }
@@ -33,7 +33,7 @@ function debug_fail() {
 
 function load_file() {
     debug_begin "Loading $1"
-    . $1 && debug_complete "Loading $1" || (debug_fail "Loading $1" ; return 1)
+    . "${ROOT_PATH}/${1}" && debug_complete "Loading $1" || (debug_fail "Loading $1" ; return 1)
 }
 
 function require_main() {
