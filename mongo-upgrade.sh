@@ -62,7 +62,7 @@ function stop_server() {
     fi
 
     echo "==> Removing container"
-    docker rm -f $MONGODB_CONTAINER_NAME > /dev/null 2>&1
+    docker rm -f $MONGODB_CONTAINER_NAME > /dev/null 2>&1 || true
 
     return 0
 }
