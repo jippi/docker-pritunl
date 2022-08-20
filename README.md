@@ -25,6 +25,11 @@ Image tags with software specifications and version information can be found in 
 
 _† Automation checks for new Pritunl releases nightly (CEST, ~3am), so there might be a day or two latency for most recent release_
 
+## Default user and password
+
+* User: `pritunl`
+* Password: `pritunl`
+
 ## Config
 
 Configuration settings that can be used via `--env` / `-e` CLI flag in `docker run`.
