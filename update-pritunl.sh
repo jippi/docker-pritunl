@@ -116,6 +116,11 @@ print "🚧 Pruning buildx caches"
 docker buildx prune --all --force --builder $DOCKER_BUILDX_NAME
 print "✅ Done"
 
-print "🚧 Pruning buildx exports"
-rm -rf -v "${DOCKER_CACHE_FOLDER}"
-print "✅ Done"
+if [ -d "${DOCKER_CACHE_FOLDER}" ]
+then
+    print "🚧 Pruning buildx exports"
+    rm -rf -v "${DOCKER_CACHE_FOLDER}"
+    print "✅ Done"
+else
+    print "❌ \$DOCKER_CACHE_FOLDER value [$DOCKER_CACHE_FOLDER] is not a directory"
+fi
