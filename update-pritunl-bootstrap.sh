@@ -44,6 +44,11 @@ function require_main() {
 }
 
 function has_tag() {
+    if [[ "${REBUILD_TAGS}" -eq "1" ]]
+    then
+        return 1
+    fi
+
     check=$(echo "${DOCKER_TAGS}" | grep "^$1$")
     if [ "${check}" == "" ]; then
         return 1
@@ -66,10 +71,12 @@ function docker_args_append_build_flags() {
     DOCKER_ARGS+=" --pull"
     DOCKER_ARGS+=" --push"
     DOCKER_ARGS+=" --builder ${DOCKER_BUILDX_NAME}"
+    DOCKER_ARGS+=" --platform linux/amd64"
     DOCKER_ARGS+=" --cache-from type=local,src=${DOCKER_CACHE_FOLDER}"
     DOCKER_ARGS+=" --cache-to   type=local,dest=${DOCKER_CACHE_FOLDER}"
 
-    if [ "${DEBUG}" == "0" ]; then
+    if [ "${DEBUG}" == "0" ]
+    then
         DOCKER_ARGS+=" --quiet"
     else
         DOCKER_ARGS+=" --progress=plain"

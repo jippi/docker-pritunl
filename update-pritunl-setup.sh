@@ -6,8 +6,11 @@ OUTPUT_PREFIX="[setup]"
 # Docker registry authentication
 ########################################################################
 
+set -e
+set -o pipefail
+
 # ECR
-if ! curl -s -S --fail --header "Authorization: Basic $(jq -r '.auths["'public.ecr.aws'"]["auth"]' ~/.docker/config.json)" public.ecr.aws/${PUBLIC_ECR_REGISTRY} > /dev/null
+if ! curl -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["'public.ecr.aws'"]["auth"]' ~/.docker/config.json)" "https://public.ecr.aws/v2/${REPO_NAME_ECR}/manifests/latest" > /dev/null
 then
     debug "🔒 Logging in to AWS registry ..."
     aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/${PUBLIC_ECR_REGISTRY}
@@ -38,7 +41,8 @@ fi
 
 # Create buildx context
 (
-    docker buildx create --name $DOCKER_BUILDX_NAME --driver docker-container > /dev/null 2>&1 \
+    docker buildx create --name $DOCKER_BUILDX_NAME --driver docker-container --driver-opt image=moby/buildkit:master > /dev/null 2>&1 \
+    && docker run --rm --privileged multiarch/qemu-user-static --reset -p yes \
     && debug_complete "buildx container builder created"
 ) || debug_complete "buildx container builder exists"
 
