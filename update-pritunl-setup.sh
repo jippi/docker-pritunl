@@ -52,7 +52,25 @@ fi
 
 # find most recent docker tags from Docker Hub
 debug_begin "Loading docker tags"
-DOCKER_TAGS=$(curl -s "https://hub.docker.com/v2/repositories/${REPO_NAME_DOCKER_HUB}/tags/?page_size=100" | jq -r '.results[].name' | sort --numeric-sort)
+
+case $DOCKER_TAG_SOURCE in
+    "github")
+        DOCKER_TAGS=$(curl -s --header "Authorization: Bearer $(jq -r '.auths["'ghcr.io'"]["auth"]' ~/.docker/config.json)" "https://ghcr.io/v2/${REPO_NAME_GITHUB}/tags/list?n=100" | jq -r '.tags[]' | sort --numeric-sort)
+        ;;
+
+    "ecr")
+        DOCKER_TAGS=$(curl -s --header "Authorization: Bearer $(jq -r '.auths["'public.ecr.aws'"]["auth"]' ~/.docker/config.json)" "https://public.ecr.aws/v2/${REPO_NAME_ECR}/tags/list?n=100" | jq -r '.tags[]' | sort --numeric-sort)
+        ;;
+
+    "docker-hub")
+        DOCKER_TAGS=$(curl -s "https://hub.docker.com/v2/repositories/${REPO_NAME_DOCKER_HUB}/tags/?page_size=100" | jq -r '.results[].name' | sort --numeric-sort)
+        ;;
+
+    *)
+        echo "Unknown DOCKER_TAG_SOURCE: ${DOCKER_TAG_SOURCE}"
+        exit 1
+esac
+
 debug_complete "Loading docker tags"
 
 # find latest relases from pritunl/pritunl repository

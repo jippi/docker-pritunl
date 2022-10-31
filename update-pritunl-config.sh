@@ -4,6 +4,8 @@ require_main
 # Config
 ########################################################################
 
+
+DOCKER_TAG_SOURCE=${DOCKER_TAG_SOURCE:-docker-hub}
 DOCKER_CACHE_FOLDER=${DOCKER_CACHE_FOLDER:-/tmp/pritunl-build-cache}
 DOCKER_BUILDX_NAME=${DOCKER_BUILDX_NAME:-pritunl-builder}
 PUBLIC_ECR_REGISTRY=${PUBLIC_ECR_REGISTRY:-jippi}

@@ -4,8 +4,6 @@ ARG UBUNTU_RELEASE=18.04
 
 FROM ubuntu:$UBUNTU_RELEASE
 
-ARG TARGETPLATFORM
-
 ARG PRITUNL_VERSION="*"
 ENV PRITUNL_VERSION=${PRITUNL_VERSION}
 
@@ -14,9 +12,9 @@ ENV MONGODB_VERSION=${MONGODB_VERSION}
 
 COPY --chown=root:root ["docker-install.sh", "/root"]
 
-RUN --mount=id=apt-lists-${TARGETPLATFORM},target=/var/lib/apt/lists,type=cache \
-    --mount=id=apt-cache-${TARGETPLATFORM},target=/var/cache/apt,type=cache \
-    --mount=id=pritunl-cache-${TARGETPLATFORM},target=/pritunl/cache,type=cache \
+RUN --mount=id=pritunl-apt-lists,target=/var/lib/apt/lists,type=cache \
+    --mount=id=pritunl-apt-cache,target=/var/cache/apt,type=cache \
+    --mount=id=pritunl-cache,target=/pritunl/cache,type=cache \
     bash /root/docker-install.sh && rm /root/docker-install.sh
 
 ADD start-pritunl /bin/start-pritunl
