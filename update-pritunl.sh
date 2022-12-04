@@ -68,7 +68,7 @@ do
             fi
 
             print "🚧 Building container image"
-            docker buildx build $DOCKER_ARGS .
+            docker buildx build $DOCKER_ARGS $ROOT_PATH
             print "✅ Done"
         else
             print "✅ Already build"
@@ -99,7 +99,7 @@ do
             debug "Building with tags: [${DOCKER_ARGS}]"
 
             print "🚧 Building container image"
-            docker buildx build ${DOCKER_ARGS} --build-arg=MONGODB_VERSION=no .
+            docker buildx build ${DOCKER_ARGS} --build-arg=MONGODB_VERSION=no $ROOT_PATH
             print "✅ Done"
         else
             print "✅ Already build"
