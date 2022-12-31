@@ -29,9 +29,15 @@ _† Automation checks for new Pritunl releases nightly (CEST, ~3am), so there m
 
 Run the following command to obtain the default login username and password:
 
-`docker exec -it [container_name] pritunl default-password`
+```
+docker exec -it [container_name] pritunl default-password
+```
 
-Ex: `docker exec -it pritunl pritunl default-password`
+Ex:
+
+```
+docker exec -it pritunl pritunl default-password
+```
 
 ## Config
 
