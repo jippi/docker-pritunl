@@ -5,6 +5,7 @@ require_main
 ########################################################################
 # Config
 ########################################################################
+DEBUG=${DEBUG:-0}
 
 DOCKER_TAG_SOURCE=${DOCKER_TAG_SOURCE:-hub}
 DOCKER_CACHE_FOLDER=${DOCKER_CACHE_FOLDER:-/data/local/cache/pritunl-build-cache}

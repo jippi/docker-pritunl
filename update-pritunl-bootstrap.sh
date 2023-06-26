@@ -1,5 +1,10 @@
 set -o errexit -o nounset -o pipefail
 
+if [[ "${DEBUG}" -eq "1" ]]
+then
+    set -x
+fi
+
 if [ "${MAIN_LOADED}" != "1" ]; then
     echo "Should not be loaded or run directly, please use [update-pritunl.sh]"
     exit 1
@@ -10,13 +15,6 @@ GREEN='\033[1;32m'
 NO_COLOR='\033[0m'
 RED='\033[0;31m'
 YELLOW='\033[0;33m'
-
-DEBUG=${DEBUG:-0}
-
-if [[ "${DEBUG}" -gt "1" ]]
-then
-    set -x
-fi
 
 function print() {
     echo $OUTPUT_PREFIX $@
