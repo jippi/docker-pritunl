@@ -8,7 +8,6 @@ OUTPUT_PREFIX="[setup]"
 # Docker registry authentication
 ########################################################################
 
-
 # ECR
 if ! curl -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["'public.ecr.aws'"]["auth"]' ~/.docker/config.json)" "https://public.ecr.aws/v2/${REPO_NAME_ECR}/manifests/latest" > /dev/null
 then
@@ -29,7 +28,7 @@ then
         exit 1
     fi
 
-    echo $CR_PAT | docker login ghcr.io -u jippi --password-stdin > /dev/null
+    echo "${CR_PAT}" | docker login ghcr.io -u jippi --password-stdin > /dev/null
     debug_complete "Login to GitHub registry successful"
 else
     debug_complete "Already logged in to GitHub registry"
@@ -41,7 +40,7 @@ fi
 
 # Create buildx context
 (
-    docker buildx create --name $DOCKER_BUILDX_NAME --driver docker-container --driver-opt image=moby/buildkit:master > /dev/null 2>&1 \
+    docker buildx create --name "${DOCKER_BUILDX_NAME}" --driver docker-container --driver-opt image=moby/buildkit:master > /dev/null 2>&1 \
     && docker run --rm --privileged multiarch/qemu-user-static --reset -p yes \
     && debug_complete "buildx container builder created"
 ) || debug_complete "buildx container builder exists"
@@ -62,7 +61,7 @@ case $DOCKER_TAG_SOURCE in
         DOCKER_TAGS=$(curl -s --header "Authorization: Bearer $(jq -r '.auths["'public.ecr.aws'"]["auth"]' ~/.docker/config.json)" "https://public.ecr.aws/v2/${REPO_NAME_ECR}/tags/list?n=100" | jq -r '.tags[]' | sort --numeric-sort)
         ;;
 
-    "docker-hub")
+    "hub")
         DOCKER_TAGS=$(curl -s "https://hub.docker.com/v2/repositories/${REPO_NAME_DOCKER_HUB}/tags/?page_size=100" | jq -r '.results[].name' | sort --numeric-sort)
         ;;
 
