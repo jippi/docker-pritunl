@@ -5,9 +5,16 @@ if [ "${MAIN_LOADED}" != "1" ]; then
     exit 1
 fi
 
+BLUE='\033[1;34m'
+GREEN='\033[1;32m'
+NO_COLOR='\033[0m'
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+
 DEBUG=${DEBUG:-0}
 
-if [[ "${DEBUG}" -gt "1" ]]; then
+if [[ "${DEBUG}" -gt "1" ]]
+then
     set -x
 fi
 
@@ -16,7 +23,8 @@ function print() {
 }
 
 function debug() {
-    if [[ "${DEBUG}" -gt "0" ]]; then
+    if [[ "${DEBUG}" -gt "0" ]]
+    then
         echo $OUTPUT_PREFIX $@
     fi
 }
@@ -33,13 +41,25 @@ function debug_fail() {
     debug "❌ $@"
 }
 
+function action_error() {
+    echo -e >&2 "❌ ${RED}$1${NO_COLOR}"
+}
+
+function action_error_exit() {
+    action_error "$1. Aborting!"
+
+    exit 1
+}
+
 function load_file() {
     debug_begin "Loading $1"
+
     . "${ROOT_PATH}/${1}" && debug_complete "Loading $1" || (debug_fail "Loading $1" ; return 1)
 }
 
 function require_main() {
-    if [ "${MAIN_LOADED}" != "1" ]; then
+    if [ "${MAIN_LOADED}" != "1" ]
+    then
         echo "File should not be loaded or run directly, please use [update-pritunl.sh]"
         exit 1
     fi
@@ -52,7 +72,8 @@ function has_tag() {
     fi
 
     check=$(echo "${DOCKER_TAGS}" | grep "^$1$")
-    if [ "${check}" == "" ]; then
+    if [ "${check}" == "" ]
+    then
         return 1
     fi
 

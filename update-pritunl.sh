@@ -40,7 +40,8 @@ do
         suffix=""
 
         # change docker tag if we're not building bionic
-        if [ "${ubuntu_release}" != "bionic" ]; then
+        if [ "${ubuntu_release}" != "bionic" ]
+        then
             suffix="-${ubuntu_release}"
             tag="${tag}${suffix}"
         fi

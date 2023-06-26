@@ -6,7 +6,6 @@ require_main
 # Config
 ########################################################################
 
-
 DOCKER_TAG_SOURCE=${DOCKER_TAG_SOURCE:-hub}
 DOCKER_CACHE_FOLDER=${DOCKER_CACHE_FOLDER:-/data/local/cache/pritunl-build-cache}
 DOCKER_BUILDX_NAME=${DOCKER_BUILDX_NAME:-pritunl-builder}

@@ -4,6 +4,11 @@ require_main
 
 OUTPUT_PREFIX="[setup]"
 
+command -v curl >/dev/null 2>&1 || { action_error_exit "I require the 'curl' command, but it's not installed"; }
+command -v docker >/dev/null 2>&1 || { action_error_exit "I require the 'docker' command, but it's not installed"; }
+command -v aws >/dev/null 2>&1 || { action_error_exit "I require the 'aws' command, but it's not installed"; }
+command -v jq >/dev/null 2>&1 || { action_error_exit "I require the 'jq' command, but it's not installed"; }
+
 ########################################################################
 # Docker registry authentication
 ########################################################################
@@ -27,7 +32,7 @@ then
     debug "🔒 Logging in to GitHub registry ..."
     if [ -z "${CR_PAT}" ]
     then
-        debug_fail "Missing \$CR_PAT env key"
+        debug_fail "Missing \$CR_PAT env key for GitHub login"
         exit 1
     fi
 
