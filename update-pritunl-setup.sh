@@ -21,6 +21,9 @@ fi
 # GitHub
 if ! curl -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["'ghcr.io'"]["auth"]' ~/.docker/config.json)" "https://ghcr.io/v2/${REPO_NAME_GITHUB}/manifests/latest" > /dev/null
 then
+    # make sure to set CR_PAT env
+    CR_PAT=${CR_PAT:-}
+
     debug "🔒 Logging in to GitHub registry ..."
     if [ -z "${CR_PAT}" ]
     then
