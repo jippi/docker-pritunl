@@ -4,7 +4,7 @@ require_main
 
 OUTPUT_PREFIX="[setup]"
 
-command -v curl >/dev/null 2>&1 || { action_error_exit "I require the 'curl' command, but it's not installed"; }
+command -v curl >/dev/null 2>&1 || { action_error_exit "I require the 'docker' command, but it's not installed"; }
 command -v docker >/dev/null 2>&1 || { action_error_exit "I require the 'docker' command, but it's not installed"; }
 command -v aws >/dev/null 2>&1 || { action_error_exit "I require the 'aws' command, but it's not installed"; }
 command -v jq >/dev/null 2>&1 || { action_error_exit "I require the 'jq' command, but it's not installed"; }
@@ -24,7 +24,7 @@ else
 fi
 
 # GitHub
-if ! curl -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["'ghcr.io'"]["auth"]' ~/.docker/config.json)" "https://ghcr.io/v2/${REPO_NAME_GITHUB}/manifests/latest" > /dev/null
+if ! curl -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["'ghcr.io'"]["auth"]' ~/.docker/config.json)" --header "Accept: application/vnd.oci.image.index.v1+json" "https://ghcr.io/v2/${REPO_NAME_GITHUB}/manifests/latest" > /dev/null
 then
     # make sure to set CR_PAT env
     CR_PAT=${CR_PAT:-}
