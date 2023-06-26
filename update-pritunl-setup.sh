@@ -1,3 +1,5 @@
+set -o errexit -o nounset -o pipefail
+
 require_main
 
 OUTPUT_PREFIX="[setup]"
@@ -6,8 +8,6 @@ OUTPUT_PREFIX="[setup]"
 # Docker registry authentication
 ########################################################################
 
-set -e
-set -o pipefail
 
 # ECR
 if ! curl -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["'public.ecr.aws'"]["auth"]' ~/.docker/config.json)" "https://public.ecr.aws/v2/${REPO_NAME_ECR}/manifests/latest" > /dev/null

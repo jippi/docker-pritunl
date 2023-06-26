@@ -1,3 +1,5 @@
+set -o errexit -o nounset -o pipefail
+
 if [ "${MAIN_LOADED}" != "1" ]; then
     echo "Should not be loaded or run directly, please use [update-pritunl.sh]"
     exit 1
