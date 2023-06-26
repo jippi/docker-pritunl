@@ -5,7 +5,7 @@ if [ "${MAIN_LOADED}" != "1" ]; then
     exit 1
 fi
 
-DEBUG=${DEBUG:0}
+DEBUG=${DEBUG:-0}
 
 if [[ "${DEBUG}" -gt "1" ]]; then
     set -x
