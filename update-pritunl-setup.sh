@@ -2,6 +2,11 @@ set -o errexit -o nounset -o pipefail
 
 require_main
 
+if [[ "${DEBUG}" -eq "2" ]]
+then
+    set -x
+fi
+
 OUTPUT_PREFIX="[setup]"
 
 command -v curl >/dev/null 2>&1 || { action_error_exit "I require the 'docker' command, but it's not installed"; }
