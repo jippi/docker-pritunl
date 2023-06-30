@@ -10,10 +10,9 @@ OUTPUT_PREFIX="[boot] "
 # Load libraries
 ########################################################################
 
+source "${ROOT_PATH}/update-pritunl-config.sh"
 source "${ROOT_PATH}/update-pritunl-bootstrap.sh"
-
-load_file update-pritunl-config.sh
-load_file update-pritunl-setup.sh
+source "${ROOT_PATH}/update-pritunl-setup.sh"
 
 ########################################################################
 # Build docker images
