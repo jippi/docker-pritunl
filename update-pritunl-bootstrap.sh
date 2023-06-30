@@ -1,10 +1,5 @@
 set -o errexit -o nounset -o pipefail
 
-if [[ "${DEBUG}" -eq "1" ]]
-then
-    set -x
-fi
-
 if [ "${MAIN_LOADED}" != "1" ]; then
     echo "Should not be loaded or run directly, please use [update-pritunl.sh]"
     exit 1
