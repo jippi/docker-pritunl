@@ -113,7 +113,7 @@ then
 fi
 
 print "🚧 Pruning buildx caches"
-docker buildx prune --all --force --builder $DOCKER_BUILDX_NAME
+docker buildx prune --all --force --builder $DOCKER_BUILDX_NAME || echo "docker buildx builder [$DOCKER_BUILDX_NAME] does not exist"
 print "✅ Done"
 
 if [ -d "${DOCKER_CACHE_FOLDER}" ]
@@ -126,6 +126,4 @@ then
     else
         print "❌ \$DOCKER_CACHE_FOLDER [$DOCKER_CACHE_FOLDER] does not have an /ingest subfolder, might not be a cache folder after all?"
     fi
-else
-    print "❌ \$DOCKER_CACHE_FOLDER [$DOCKER_CACHE_FOLDER] is not a directory"
 fi
