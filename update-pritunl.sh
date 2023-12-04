@@ -93,7 +93,7 @@ do
             if [ "${pritunl_release}" == "${latest_release}" ]
             then
                 OUTPUT_PREFIX="[${pritunl_release}/${ubuntu_release}/minimal/latest]"
-                print "🏷️ Tagging as latest"
+                print "🏷️  Tagging as latest"
                 docker_args_append_tag_flags "latest${suffix}-minimal"
             fi
 
