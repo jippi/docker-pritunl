@@ -33,7 +33,7 @@ do
     fi
 
     # loop over ubuntu releases we support
-    for ubuntu_release in bionic focal
+    for ubuntu_release in bionic focal jammy
     do
         tag=${pritunl_release}
         suffix=""
