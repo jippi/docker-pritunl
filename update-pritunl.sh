@@ -67,8 +67,10 @@ do
             fi
 
             print "🚧 Building container image"
+            start=$SECONDS
             docker buildx build $DOCKER_ARGS $ROOT_PATH
-            print "✅ Done"
+            diff=$(($SECONDS - $start))
+            print "✅ Done in $(date -ud "@$diff" "+%H:%M:%S")"
         else
             print "✅ Already build"
         fi
@@ -98,8 +100,10 @@ do
             debug "Building with tags: [${DOCKER_ARGS}]"
 
             print "🚧 Building container image"
+            start=$SECONDS
             docker buildx build ${DOCKER_ARGS} --build-arg=MONGODB_VERSION=no $ROOT_PATH
-            print "✅ Done"
+            diff=$(($SECONDS - $start))
+            print "✅ Done in $(date -ud "@$diff" "+%H:%M:%S")"
         else
             print "✅ Already build"
         fi
