@@ -18,10 +18,14 @@ Image tags with software specifications and version information can be found in 
 | `latest-minimal`          | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Bionic (18.04)          |           ❌            |            ✅             | ~190 MB         |
 | `latest-focal`            | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Focal (20.04)           |        ✅ (5.x)         |            ✅             | ~390 MB         |
 | `latest-focal-minimal`    | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Focal (20.04)           |           ❌            |            ✅             | ~190 MB         |
+| `latest-jammy`            | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Jammy (22.04)           |        ✅ (5.x)         |            ✅             | ~390 MB         |
+| `latest-jammy-minimal`    | [latest †](https://github.com/pritunl/pritunl/releases/latest)              | Jammy (22.04)           |           ❌            |            ✅             | ~190 MB         |
 | `$version`                | `$version`                                                                  | Bionic (18.04)          |        ✅ (4.4)         |            ✅             | ~390 MB         |
 | `$version-minimal`        | `$version`                                                                  | Bionic (18.04)          |           ❌            |            ✅             | ~190 MB         |
 | `$version-focal`          | `$version`                                                                  | Focal (20.04)           |        ✅ (5.x)         |            ✅             | ~390 MB         |
 | `$version-focal-minimal`  | `$version`                                                                  | Focal (20.04)           |           ❌            |            ✅             | ~190 MB         |
+| `$version-jammy`          | `$version`                                                                  | Jammy (22.04)           |        ✅ (5.x)         |            ✅             | ~390 MB         |
+| `$version-jammy-minimal`  | `$version`                                                                  | Jammy (22.04)           |           ❌            |            ✅             | ~190 MB         |
 
 _† Automation checks for new Pritunl releases nightly (CEST, ~3am), so there might be a day or two latency for most recent release_
 
@@ -29,13 +33,13 @@ _† Automation checks for new Pritunl releases nightly (CEST, ~3am), so there m
 
 Run the following command to obtain the default login username and password:
 
-```
+```sh
 docker exec -it [container_name] pritunl default-password
 ```
 
 Ex:
 
-```
+```sh
 docker exec -it pritunl pritunl default-password
 ```
 
@@ -250,4 +254,4 @@ docker run --rm --volume ${MONGODB_DATA_PATH}:/data/db mongo:${NEXT_VERSION_TO_U
 
 ## Further help and docs
 
-For any help specific to Pritunl please have a look at http://pritunl.com and https://github.com/pritunl/pritunl
+For any help specific to Pritunl please have a look at <http://pritunl.com> and <https://github.com/pritunl/pritunl>

@@ -18,8 +18,12 @@ command -v jq >/dev/null 2>&1 || { action_error_exit "I require the 'jq' command
 # Docker registry authentication
 ########################################################################
 
+if [ -f ".env" ]; then
+    source ".env"
+fi
+
 # ECR
-if ! curl -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["'public.ecr.aws'"]["auth"]' ~/.docker/config.json)" "https://public.ecr.aws/v2/${REPO_NAME_ECR}/manifests/latest" > /dev/null
+if ! curl -L -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["public.ecr.aws"]["auth"] // "N/A"' ~/.docker/config.json)" "https://public.ecr.aws/v2/${REPO_NAME_ECR}/manifests/latest" > /dev/null
 then
     debug "🔒 Logging in to AWS registry ..."
     aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/${PUBLIC_ECR_REGISTRY}
@@ -29,7 +33,7 @@ else
 fi
 
 # GitHub
-if ! curl -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["'ghcr.io'"]["auth"]' ~/.docker/config.json)" --header "Accept: application/vnd.oci.image.index.v1+json" "https://ghcr.io/v2/${REPO_NAME_GITHUB}/manifests/latest" > /dev/null
+if ! curl -L -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["ghcr.io"]["auth"] // "N/A"' ~/.docker/config.json)" --header "Accept: application/vnd.oci.image.index.v1+json" "https://ghcr.io/v2/${REPO_NAME_GITHUB}/manifests/latest" > /dev/null
 then
     # make sure to set CR_PAT env
     CR_PAT=${CR_PAT:-}
@@ -53,8 +57,7 @@ fi
 
 # Create buildx context
 (
-    docker buildx create --name "${DOCKER_BUILDX_NAME}" --driver docker-container --driver-opt image=moby/buildkit:master > /dev/null 2>&1 \
-    && docker run --rm --privileged multiarch/qemu-user-static --reset -p yes \
+    docker buildx create --name "${DOCKER_BUILDX_NAME}" > /dev/null 2>&1 \
     && debug_complete "buildx container builder created"
 ) || debug_complete "buildx container builder exists"
 

@@ -6,11 +6,11 @@ set -ex
 
 # command shortcuts
 APT_UPDATE="apt-get update --quiet"
-APT_INSTALL="apt-get install --no-install-recommends --yes"
+APT_INSTALL="apt-get install --no-install-recommends --no-install-suggests --yes"
 WGET="wget --quiet"
 
 # keep APT packages so buildkit can cache them instead
-rm -f /etc/apt/apt.conf.d/docker-clean
+rm -fv /etc/apt/apt.conf.d/docker-clean
 
 # install basic packages needed
 $APT_UPDATE
@@ -54,7 +54,8 @@ else
     echo "OK! pritunl deb file already exsist in ${pritunl_deb_file}"
 fi
 
-$APT_INSTALL $pritunl_deb_file wireguard wireguard-tools
+$APT_INSTALL $pritunl_deb_file
+$APT_INSTALL wireguard wireguard-tools
 
 rm -rf \
     /tmp/* \
