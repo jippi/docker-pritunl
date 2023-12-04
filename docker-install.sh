@@ -29,10 +29,17 @@ then
     MONGODB_VERSION=4.4
     MONGODB_INSTALL_VERSION="4.4.*"
 
-    # use modern mongo for non bionic
-    if [ "${DISTRIB_CODENAME}" != "bionic" ]
+    # use modern mongo for focal
+    if [ "${DISTRIB_CODENAME}" == "focal" ]
     then
         MONGODB_VERSION=5.0
+        MONGODB_INSTALL_VERSION="*"
+    fi
+
+    # use modern mongo for jammy
+    if [ "${DISTRIB_CODENAME}" == "jammy" ]
+    then
+        MONGODB_VERSION=6.0
         MONGODB_INSTALL_VERSION="*"
     fi
 
