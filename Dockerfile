@@ -1,22 +1,51 @@
-# syntax=docker/dockerfile:1.4
+# syntax=docker/dockerfile:1
+
 ARG BUILDKIT_SBOM_SCAN_STAGE=true
 ARG BUILDKIT_SBOM_SCAN_CONTEXT=true
 ARG UBUNTU_RELEASE=18.04
 
-FROM ubuntu:$UBUNTU_RELEASE
+#############################################
+# Base layer
+#############################################
 
-ARG PRITUNL_VERSION="*"
-ENV PRITUNL_VERSION=${PRITUNL_VERSION}
+FROM ubuntu:$UBUNTU_RELEASE AS base-layer
+
+COPY --chown=root:root ["docker-install-base.sh", "/root"]
+
+RUN --mount=id=pritunl-apt-lists,target=/var/lib/apt,type=cache \
+    --mount=id=pritunl-apt-cache,target=/var/cache/apt,type=cache \
+    bash /root/docker-install-base.sh && rm /root/docker-install-base.sh
+
+#############################################
+# MongoDB layer
+#############################################
+
+FROM base-layer AS monogodb-layer
+
+COPY --chown=root:root ["docker-install-mongo.sh", "/root"]
 
 ARG MONGODB_VERSION="*"
 ENV MONGODB_VERSION=${MONGODB_VERSION}
 
-COPY --chown=root:root ["docker-install.sh", "/root"]
+RUN --mount=id=pritunl-apt-lists,target=/var/lib/apt,type=cache \
+    --mount=id=pritunl-apt-cache,target=/var/cache/apt,type=cache \
+    bash /root/docker-install-mongo.sh && rm /root/docker-install-mongo.sh
 
-RUN --mount=id=pritunl-apt-lists,target=/var/lib/apt/lists,type=cache \
+#############################################
+# Final/runtime layer
+#############################################
+
+FROM monogodb-layer
+
+ARG PRITUNL_VERSION="*"
+ENV PRITUNL_VERSION=${PRITUNL_VERSION}
+
+COPY --chown=root:root ["docker-install-pritunl.sh", "/root"]
+
+RUN --mount=id=pritunl-apt-lists,target=/var/lib/apt,type=cache \
     --mount=id=pritunl-apt-cache,target=/var/cache/apt,type=cache \
     --mount=id=pritunl-cache,target=/pritunl/cache,type=cache \
-    bash /root/docker-install.sh && rm /root/docker-install.sh
+    bash /root/docker-install-pritunl.sh && rm /root/docker-install-pritunl.sh
 
 ADD start-pritunl /bin/start-pritunl
 

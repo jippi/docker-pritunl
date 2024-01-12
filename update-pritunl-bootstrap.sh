@@ -16,8 +16,7 @@ function print() {
 }
 
 function debug() {
-    if [[ "${DEBUG}" -gt "0" ]]
-    then
+    if [[ "${DEBUG}" -gt "0" ]]; then
         echo $OUTPUT_PREFIX $@
     fi
 }
@@ -35,7 +34,7 @@ function debug_fail() {
 }
 
 function action_error() {
-    echo -e >&2 "❌ ${RED}$1${NO_COLOR}"
+    echo -e "❌ ${RED}$1${NO_COLOR}" >&2
 }
 
 function action_error_exit() {
@@ -47,26 +46,26 @@ function action_error_exit() {
 function load_file() {
     debug_begin "Loading $1"
 
-    . "${ROOT_PATH}/${1}" && debug_complete "Loading $1" || (debug_fail "Loading $1" ; return 1)
+    . "${ROOT_PATH}/${1}" && debug_complete "Loading $1" || (
+        debug_fail "Loading $1"
+        return 1
+    )
 }
 
 function require_main() {
-    if [ "${MAIN_LOADED}" != "1" ]
-    then
+    if [ "${MAIN_LOADED}" != "1" ]; then
         echo "File should not be loaded or run directly, please use [update-pritunl.sh]"
         exit 1
     fi
 }
 
 function has_tag() {
-    if [[ "${REBUILD_TAGS}" -eq "1" ]]
-    then
+    if [[ "${REBUILD_TAGS}" -eq "1" ]]; then
         return 1
     fi
 
     check=$(echo "${DOCKER_TAGS}" | grep "^$1$")
-    if [ "${check}" == "" ]
-    then
+    if [ "${check}" == "" ]; then
         return 1
     fi
 
@@ -88,14 +87,12 @@ function docker_args_append_build_flags() {
     DOCKER_ARGS+=" --push"
     DOCKER_ARGS+=" --builder ${DOCKER_BUILDX_NAME}"
     DOCKER_ARGS+=" --sbom true"
-    # DOCKER_ARGS+=" --sbom generator=docker/buildkit-syft-scanner:1.3.0-rc.1"
     DOCKER_ARGS+=" --attest type=provenance,mode=max"
     DOCKER_ARGS+=" --platform linux/amd64"
     DOCKER_ARGS+=" --cache-from type=local,src=${DOCKER_CACHE_FOLDER}"
     DOCKER_ARGS+=" --cache-to   type=local,dest=${DOCKER_CACHE_FOLDER}"
 
-    if [ "${DEBUG}" == "0" ]
-    then
+    if [ "${DEBUG}" == "0" ]; then
         DOCKER_ARGS+=" --quiet"
     else
         DOCKER_ARGS+=" --progress=plain"

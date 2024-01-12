@@ -3,7 +3,7 @@
 set -o errexit -o nounset -o pipefail
 
 MAIN_LOADED=1
-ROOT_PATH="$( dirname -- "$0"; )";
+ROOT_PATH="$(dirname -- "$0")"
 OUTPUT_PREFIX="[boot] "
 
 ########################################################################
@@ -21,26 +21,22 @@ source "${ROOT_PATH}/update-pritunl-setup.sh"
 debug "github tags: $(echo $pritunl_releases | xargs)"
 debug "latest tag will be ${latest_release}"
 
-for pritunl_release in $pritunl_releases
-do
+for pritunl_release in $pritunl_releases; do
     OUTPUT_PREFIX="[${pritunl_release}/default]"
 
     debug "Considering release"
-    if [[ " ${SKIP[*]} " =~ " ${pritunl_release} " ]]
-    then
-        print "Skipping ....";
+    if [[ " ${SKIP[*]} " =~ " ${pritunl_release} " ]]; then
+        print "Skipping ...."
         continue
     fi
 
     # loop over ubuntu releases we support
-    for ubuntu_release in bionic focal jammy
-    do
+    for ubuntu_release in bionic focal jammy; do
         tag=${pritunl_release}
         suffix=""
 
         # change docker tag if we're not building bionic
-        if [ "${ubuntu_release}" != "bionic" ]
-        then
+        if [ "${ubuntu_release}" != "bionic" ]; then
             suffix="-${ubuntu_release}"
             tag="${tag}${suffix}"
         fi
@@ -52,14 +48,12 @@ do
         # build with mongo (default container)
         ####################################################################################
 
-        if ! has_tag $tag
-        then
+        if ! has_tag $tag; then
             docker_args_reset
             docker_args_append_build_flags $pritunl_release $ubuntu_release
             docker_args_append_tag_flags $tag
 
-            if [ "${pritunl_release}" == "${latest_release}" ]
-            then
+            if [ "${pritunl_release}" == "${latest_release}" ]; then
                 OUTPUT_PREFIX="[${pritunl_release}/${ubuntu_release}/default/latest]"
 
                 print "🏷️  Tagging as latest"
@@ -84,14 +78,12 @@ do
 
         tag+="-minimal"
 
-        if ! has_tag $tag
-        then
+        if ! has_tag $tag; then
             docker_args_reset
             docker_args_append_build_flags $pritunl_release $ubuntu_release
             docker_args_append_tag_flags $tag
 
-            if [ "${pritunl_release}" == "${latest_release}" ]
-            then
+            if [ "${pritunl_release}" == "${latest_release}" ]; then
                 OUTPUT_PREFIX="[${pritunl_release}/${ubuntu_release}/minimal/latest]"
                 print "🏷️  Tagging as latest"
                 docker_args_append_tag_flags "latest${suffix}-minimal"
@@ -110,20 +102,17 @@ do
     done
 done
 
-if [ "$DEBUG" != "0" ]
-then
+if [ "$DEBUG" != "0" ]; then
     debug_complete "Not flushing caches in debug mode"
     exit 0
 fi
 
 print "🚧 Pruning buildx caches"
-docker buildx prune --all --force --builder $DOCKER_BUILDX_NAME || echo "docker buildx builder [$DOCKER_BUILDX_NAME] does not exist"
+docker buildx inspect --bootstrap "${DOCKER_BUILDX_NAME}" >/dev/null && docker buildx prune --all --force --builder "${DOCKER_BUILDX_NAME}"
 print "✅ Done"
 
-if [ -d "${DOCKER_CACHE_FOLDER}" ]
-then
-    if [ -d "${DOCKER_CACHE_FOLDER}/ingest" ]
-    then
+if [ -d "${DOCKER_CACHE_FOLDER}" ]; then
+    if [ -d "${DOCKER_CACHE_FOLDER}/ingest" ]; then
         print "🚧 Pruning buildx exports"
         rm -rf -v "${DOCKER_CACHE_FOLDER}"
         print "✅ Done"
