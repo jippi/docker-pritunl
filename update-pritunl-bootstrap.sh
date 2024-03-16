@@ -60,12 +60,12 @@ function docker_args_append_build_flags() {
 
     DOCKER_ARGS+=(--pull)
     DOCKER_ARGS+=(--push)
-    DOCKER_ARGS+=(--builder "${DOCKER_BUILDX_NAME}")
+    DOCKER_ARGS+=(--builder "${DOCKER_BUILDX_NAME:?}")
     DOCKER_ARGS+=(--sbom true)
     DOCKER_ARGS+=(--attest "type=provenance,mode=max")
     DOCKER_ARGS+=(--platform linux/amd64)
-    DOCKER_ARGS+=(--cache-from "type=local,src=${DOCKER_CACHE_FOLDER}")
-    DOCKER_ARGS+=(--cache-to "type=local,dest=${DOCKER_CACHE_FOLDER}")
+    DOCKER_ARGS+=(--cache-from "type=local,src=${DOCKER_CACHE_FOLDER:?}")
+    DOCKER_ARGS+=(--cache-to "type=local,dest=${DOCKER_CACHE_FOLDER:?}")
 
     if [[ "${DEBUG}" == "0" ]]; then
         DOCKER_ARGS+=(--quiet)
@@ -73,7 +73,7 @@ function docker_args_append_build_flags() {
         DOCKER_ARGS+=(--progress plain)
     fi
 
-    DOCKER_ARGS+=(--build-arg "BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)")
+    DOCKER_ARGS+=(--build-arg "BUILD_DATE=${BUILD_DATE:?}")
     DOCKER_ARGS+=(--build-arg "PRITUNL_VERSION=${pritunl_version}")
     DOCKER_ARGS+=(--build-arg "UBUNTU_RELEASE=${ubuntu_release}")
 }

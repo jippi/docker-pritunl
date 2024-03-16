@@ -12,6 +12,9 @@ if [[ "${DEBUG}" -eq "2" ]]; then
     set -x
 fi
 
+declare -gx BUILD_DATE
+BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+
 declare -gx REBUILD_TAGS=${REBUILD_TAGS:-0}
 declare -gx OUTPUT_PREFIX="[boot] "
 declare -gx DOCKER_TAG_SOURCE=${DOCKER_TAG_SOURCE:-hub}
