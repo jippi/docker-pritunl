@@ -123,3 +123,8 @@ if [[ -d "${DOCKER_CACHE_FOLDER:?}/ingest" ]]; then
     rm -rf -v "${DOCKER_CACHE_FOLDER:?}"
     print "✅ Done"
 fi
+
+# This might not be needed in once https://github.com/moby/moby/releases/tag/v26.0.0-rc2 is released!
+print "🚧 Removing buildx builder to free up disk space"
+docker buildx rm --force --builder "${DOCKER_BUILDX_NAME:?}" || :
+print "✅ Done"
