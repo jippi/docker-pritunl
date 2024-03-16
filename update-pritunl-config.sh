@@ -30,8 +30,6 @@ declare -gx RED='\033[0;31m'
 # List of releases to skip
 declare -gxA SKIP=(
     [1.29.2589.95]="no binaries on GitHub"
-    # [1.32.3805.31]="broken deb file"
-    # [1.32.3805.95]="broken deb file"
 )
 
 declare -gx DEFAULT_UBUNTU_RELEASE="focal"
