@@ -1,7 +1,6 @@
 #syntax=docker/dockerfile:1
 
 ARG UBUNTU_RELEASE
-ARG BUILDKIT_SBOM_SCAN_STAGE=true
 ARG BUILDKIT_SBOM_SCAN_CONTEXT=true
 
 #############################################
@@ -9,6 +8,8 @@ ARG BUILDKIT_SBOM_SCAN_CONTEXT=true
 #############################################
 
 FROM ubuntu:$UBUNTU_RELEASE AS base-layer
+
+ARG BUILDKIT_SBOM_SCAN_STAGE=true
 
 COPY --chown=root:root ["docker-install-base.sh", "/root"]
 
@@ -23,6 +24,8 @@ RUN --mount=id=pritunl-apt-lists,target=/var/lib/apt,type=cache \
 #############################################
 
 FROM base-layer AS monogodb-layer
+
+ARG BUILDKIT_SBOM_SCAN_STAGE=true
 
 COPY --chown=root:root ["docker-install-mongo.sh", "/root"]
 
@@ -41,6 +44,7 @@ RUN --mount=id=pritunl-apt-lists,target=/var/lib/apt,type=cache \
 
 FROM monogodb-layer
 
+ARG BUILDKIT_SBOM_SCAN_STAGE=true
 ARG PRITUNL_VERSION
 ENV PRITUNL_VERSION=${PRITUNL_VERSION}
 
