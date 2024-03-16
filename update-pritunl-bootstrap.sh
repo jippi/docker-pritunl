@@ -8,6 +8,8 @@ function print() {
 
 function debug() {
     [[ "${DEBUG:?}" -gt "0" ]] && echo "${OUTPUT_PREFIX}" "$@"
+
+    return 0
 }
 
 function debug_begin() {

@@ -14,8 +14,8 @@ source "update-pritunl-setup.sh"
 # Build docker images
 ########################################################################
 
-debug "github tags: $(echo "${pritunl_releases}" | xargs || true)"
-debug "latest tag will be ${latest_release}"
+debug "github tags: $(echo "${pritunl_releases:?}" | xargs || true)"
+debug "latest tag will be ${latest_release:?}"
 
 for pritunl_release in ${pritunl_releases}; do
     OUTPUT_PREFIX="[build/${pritunl_release}/default]"
@@ -109,21 +109,17 @@ for pritunl_release in ${pritunl_releases}; do
     fi
 done
 
-if [[ "${DEBUG}" != "0" ]]; then
+if [[ "${DEBUG:?}" != "0" ]]; then
     debug_complete "Not flushing caches in debug mode"
     exit 0
 fi
 
 print "🚧 Pruning buildx caches"
-docker buildx inspect --bootstrap "${DOCKER_BUILDX_NAME}" >/dev/null && docker buildx prune --all --force --builder "${DOCKER_BUILDX_NAME}"
+docker buildx inspect --bootstrap "${DOCKER_BUILDX_NAME:?}" >/dev/null && docker buildx prune --all --force --builder "${DOCKER_BUILDX_NAME:?}"
 print "✅ Done"
 
-if [[ -d "${DOCKER_CACHE_FOLDER}" ]]; then
-    if [[ -d "${DOCKER_CACHE_FOLDER}/ingest" ]]; then
-        print "🚧 Pruning buildx exports"
-        rm -rf -v "${DOCKER_CACHE_FOLDER}"
-        print "✅ Done"
-    else
-        print "❌ \$DOCKER_CACHE_FOLDER [${DOCKER_CACHE_FOLDER}] does not have an /ingest subfolder, might not be a cache folder after all?"
-    fi
+if [[ -d "${DOCKER_CACHE_FOLDER:?}/ingest" ]]; then
+    print "🚧 Pruning buildx exports"
+    rm -rf -v "${DOCKER_CACHE_FOLDER:?}"
+    print "✅ Done"
 fi
