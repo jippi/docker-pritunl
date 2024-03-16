@@ -1,10 +1,6 @@
+# shellcheck shell=bash
+
 set -o errexit -o nounset -o pipefail
-
-require_main
-
-if [[ "${DEBUG}" -eq "2" ]]; then
-    set -x
-fi
 
 OUTPUT_PREFIX="[setup]"
 
@@ -17,26 +13,26 @@ command -v jq >/dev/null 2>&1 || { action_error_exit "I require the 'jq' command
 # Docker registry authentication
 ########################################################################
 
-if [ -f ".env" ]; then
+if [[ -f ".env" ]]; then
     source ".env"
 fi
 
 # ECR
-if ! curl -L -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["public.ecr.aws"]["auth"] // "N/A"' ~/.docker/config.json)" "https://public.ecr.aws/v2/${REPO_NAME_ECR}/manifests/latest" >/dev/null; then
+if ! curl -L -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["public.ecr.aws"]["auth"] // "N/A"' ~/.docker/config.json)" "https://public.ecr.aws/v2/${REPO_NAME_ECR:?}/manifests/latest" >/dev/null; then
     debug "🔒 Logging in to AWS registry ..."
-    aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/${PUBLIC_ECR_REGISTRY}
+    aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin "public.ecr.aws/${PUBLIC_ECR_REGISTRY:?}"
     debug_complete "Login to AWS registry successful"
 else
     debug_complete "Already logged in to AWS registry"
 fi
 
 # GitHub
-if ! curl -L -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["ghcr.io"]["auth"] // "N/A"' ~/.docker/config.json)" --header "Accept: application/vnd.oci.image.index.v1+json" "https://ghcr.io/v2/${REPO_NAME_GITHUB}/manifests/latest" >/dev/null; then
+if ! curl -L -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["ghcr.io"]["auth"] // "N/A"' ~/.docker/config.json)" --header "Accept: application/vnd.oci.image.index.v1+json" "https://ghcr.io/v2/${REPO_NAME_GITHUB:?}/manifests/latest" >/dev/null; then
     # make sure to set CR_PAT env
     CR_PAT=${CR_PAT:-}
 
     debug "🔒 Logging in to GitHub registry ..."
-    if [ -z "${CR_PAT}" ]; then
+    if [[ -z "${CR_PAT}" ]]; then
         debug_fail "Missing \$CR_PAT env key for GitHub login"
         exit 1
     fi
@@ -53,7 +49,7 @@ fi
 
 # Create buildx context
 (
-    docker buildx create --name "${DOCKER_BUILDX_NAME}" >/dev/null 2>&1 &&
+    docker buildx create --name "${DOCKER_BUILDX_NAME:?}" >/dev/null 2>&1 &&
         debug_complete "buildx container builder created"
 ) || debug_complete "buildx container builder exists"
 
@@ -64,7 +60,9 @@ fi
 # find most recent docker tags from Docker Hub
 debug_begin "Loading docker tags"
 
-case $DOCKER_TAG_SOURCE in
+declare -gx DOCKER_TAGS
+
+case "${DOCKER_TAG_SOURCE:?}" in
 "github")
     DOCKER_TAGS=$(curl -s --header "Authorization: Bearer $(jq -r '.auths["'ghcr.io'"]["auth"]' ~/.docker/config.json)" "https://ghcr.io/v2/${REPO_NAME_GITHUB}/tags/list?n=100" | jq -r '.tags[]' | sort --numeric-sort)
     ;;
@@ -74,7 +72,7 @@ case $DOCKER_TAG_SOURCE in
     ;;
 
 "hub")
-    DOCKER_TAGS=$(curl -s "https://hub.docker.com/v2/repositories/${REPO_NAME_DOCKER_HUB}/tags/?page_size=100" | jq -r '.results[].name' | sort --numeric-sort)
+    DOCKER_TAGS=$(curl -s "https://hub.docker.com/v2/repositories/${REPO_NAME_DOCKER_HUB:?}/tags/?page_size=100" | jq -r '.results[].name' | sort --numeric-sort)
     ;;
 
 *)
@@ -87,8 +85,12 @@ debug_complete "Loading docker tags"
 
 # find latest relases from pritunl/pritunl repository
 debug_begin "Loading pritunl/pritunl releases"
+
+declare -gx pritunl_releases
 pritunl_releases=$(curl -s https://api.github.com/repos/pritunl/pritunl/tags | jq -r '.[].name' | sort --reverse --numeric-sort | head -10)
+
+declare -gx latest_release
 latest_release=$(echo "${pritunl_releases}" | head -1)
 debug_complete "Loading pritunl/pritunl releases"
 
-mkdir -p ${DOCKER_CACHE_FOLDER}
+mkdir -p "${DOCKER_CACHE_FOLDER:?}"

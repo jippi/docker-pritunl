@@ -1,33 +1,36 @@
 #!/bin/bash
 
-set -ex
+set -o errexit -o nounset -o pipefail
+
+if [[ "${MONGODB_VERSION}" == "no" ]]; then
+    exit 0
+fi
 
 . /etc/lsb-release
 
-APT_INSTALL="apt-get install --no-install-recommends --no-install-suggests --yes"
-APT_UPDATE="apt-get update --quiet"
-WGET="wget --quiet"
+declare APT_INSTALL="apt-get install --no-install-recommends --no-install-suggests --yes"
+declare APT_UPDATE="apt-get update --quiet"
+declare WGET="wget --quiet"
 
-# install mongo in the container
-if [ "${MONGODB_VERSION}" != "no" ]; then
-    MONGODB_VERSION=4.4
-    MONGODB_INSTALL_VERSION="4.4.*"
+case "${DISTRIB_CODENAME}" in
+focal)
+    MONGODB_VERSION=5.0
+    MONGODB_INSTALL_VERSION="*"
+    ;;
 
-    # use modern mongo for focal
-    if [ "${DISTRIB_CODENAME}" == "focal" ]; then
-        MONGODB_VERSION=5.0
-        MONGODB_INSTALL_VERSION="*"
-    fi
+*)
+    MONGODB_VERSION=6.0
+    MONGODB_INSTALL_VERSION="*"
+    ;;
+esac
 
-    # use modern mongo for jammy
-    if [ "${DISTRIB_CODENAME}" == "jammy" ]; then
-        MONGODB_VERSION=6.0
-        MONGODB_INSTALL_VERSION="*"
-    fi
+# grab signing key
+${WGET} --output-document=/tmp/monogdb.asc "https://www.mongodb.org/static/pgp/server-${MONGODB_VERSION:?}.asc"
+apt-key add /tmp/monogdb.asc
 
-    $WGET --output-document=- https://www.mongodb.org/static/pgp/server-${MONGODB_VERSION}.asc | apt-key add -
-    echo "deb [arch=amd64,arm64] https://repo.mongodb.org/apt/ubuntu ${DISTRIB_CODENAME}/mongodb-org/${MONGODB_VERSION} multiverse" | tee /etc/apt/sources.list.d/mongodb-org-${MONGODB_VERSION}.list
+# setup apt repo
+echo "deb [arch=amd64,arm64] https://repo.mongodb.org/apt/ubuntu ${DISTRIB_CODENAME}/mongodb-org/${MONGODB_VERSION} multiverse" | tee "/etc/apt/sources.list.d/mongodb-org-${MONGODB_VERSION}.list"
 
-    $APT_UPDATE
-    $APT_INSTALL mongodb-org="${MONGODB_INSTALL_VERSION}"
-fi
+# install mongodb
+${APT_UPDATE}
+${APT_INSTALL} mongodb-org="${MONGODB_INSTALL_VERSION}"

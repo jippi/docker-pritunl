@@ -2,107 +2,114 @@
 
 set -o errexit -o nounset -o pipefail
 
-MAIN_LOADED=1
-ROOT_PATH="$(dirname -- "$0")"
-OUTPUT_PREFIX="[boot] "
-
 ########################################################################
 # Load libraries
 ########################################################################
 
-source "${ROOT_PATH}/update-pritunl-config.sh"
-source "${ROOT_PATH}/update-pritunl-bootstrap.sh"
-source "${ROOT_PATH}/update-pritunl-setup.sh"
+source "update-pritunl-config.sh"
+source "update-pritunl-bootstrap.sh"
+source "update-pritunl-setup.sh"
 
 ########################################################################
 # Build docker images
 ########################################################################
 
-debug "github tags: $(echo $pritunl_releases | xargs)"
+debug "github tags: $(echo "${pritunl_releases}" | xargs || true)"
 debug "latest tag will be ${latest_release}"
 
-for pritunl_release in $pritunl_releases; do
-    OUTPUT_PREFIX="[${pritunl_release}/default]"
+for pritunl_release in ${pritunl_releases}; do
+    OUTPUT_PREFIX="[build/${pritunl_release}/default]"
 
     debug "Considering release"
-    if [[ " ${SKIP[*]} " =~ " ${pritunl_release} " ]]; then
-        print "Skipping ...."
+    if [[ -n "${SKIP[${pritunl_release}]+skip}" ]]; then
+        print "🚫 Skipping: ${SKIP[${pritunl_release}]}"
         continue
     fi
 
     # loop over ubuntu releases we support
-    for ubuntu_release in bionic focal jammy; do
+    for ubuntu_release in "${UBUNTU_RELEASES[@]}"; do
         tag=${pritunl_release}
         suffix=""
 
         # change docker tag if we're not building bionic
-        if [ "${ubuntu_release}" != "bionic" ]; then
+        if [[ "${ubuntu_release}" != "${DEFAULT_UBUNTU_RELEASE}" ]]; then
             suffix="-${ubuntu_release}"
             tag="${tag}${suffix}"
         fi
 
-        OUTPUT_PREFIX="[${pritunl_release}/${ubuntu_release}/default]"
+        OUTPUT_PREFIX="[build/${pritunl_release}/${ubuntu_release}/default]"
         debug "👷 Processing"
-
-        ####################################################################################
-        # build with mongo (default container)
-        ####################################################################################
-
-        if ! has_tag $tag; then
-            docker_args_reset
-            docker_args_append_build_flags $pritunl_release $ubuntu_release
-            docker_args_append_tag_flags $tag
-
-            if [ "${pritunl_release}" == "${latest_release}" ]; then
-                OUTPUT_PREFIX="[${pritunl_release}/${ubuntu_release}/default/latest]"
-
-                print "🏷️  Tagging as latest"
-                docker_args_append_tag_flags "latest${suffix}"
-            fi
-
-            print "🚧 Building container image"
-            start=$SECONDS
-            docker buildx build $DOCKER_ARGS $ROOT_PATH
-            diff=$(($SECONDS - $start))
-            print "✅ Done in $(date -ud "@$diff" "+%H:%M:%S")"
-        else
-            print "✅ Already build"
-        fi
 
         ####################################################################################
         # build without mongo ("minimal" tag)
         ####################################################################################
 
-        OUTPUT_PREFIX="[${pritunl_release}/${ubuntu_release}/minimal]"
+        OUTPUT_PREFIX="[build/${pritunl_release}/${ubuntu_release}/minimal]"
         debug "👷 Processing"
 
         tag+="-minimal"
 
-        if ! has_tag $tag; then
+        # shellcheck disable=SC2310
+        if ! has_tag "${tag}"; then
             docker_args_reset
-            docker_args_append_build_flags $pritunl_release $ubuntu_release
-            docker_args_append_tag_flags $tag
+            docker_args_append_build_flags "${pritunl_release}" "${ubuntu_release}"
+            docker_args_without_mongodb
+            docker_args_append_tag_flags "${tag}"
 
-            if [ "${pritunl_release}" == "${latest_release}" ]; then
-                OUTPUT_PREFIX="[${pritunl_release}/${ubuntu_release}/minimal/latest]"
+            if [[ "${pritunl_release}" == "${latest_release}" ]]; then
+                OUTPUT_PREFIX="[build/${pritunl_release}/${ubuntu_release}/minimal/latest]"
                 print "🏷️  Tagging as latest"
                 docker_args_append_tag_flags "latest${suffix}-minimal"
             fi
 
-            debug "Building with tags: [${DOCKER_ARGS}]"
+            debug "Building with tags: [${DOCKER_ARGS[*]}]"
 
             print "🚧 Building container image"
-            start=$SECONDS
-            docker buildx build ${DOCKER_ARGS} --build-arg=MONGODB_VERSION=no $ROOT_PATH
-            diff=$(($SECONDS - $start))
-            print "✅ Done in $(date -ud "@$diff" "+%H:%M:%S")"
+            start=${SECONDS}
+            docker buildx build "${DOCKER_ARGS[@]}" "."
+            diff=$((SECONDS - start))
+            duration=$(date -ud "@${diff}" "+%H:%M:%S")
+            print "✅ Done in ${duration}"
         else
             print "✅ Already build"
         fi
     done
+
+    ####################################################################################
+    # build with mongo (default container)
+    ####################################################################################
+
+    # shellcheck disable=SC2310
+    if ! has_tag "${tag}"; then
+        if ! supports_mongodb "${ubuntu_release}"; then
+            print "🚫 Skipping: ${ubuntu_release} does not support MongoDB"
+
+            continue
+        fi
+
+        docker_args_reset
+        docker_args_append_build_flags "${pritunl_release}" "${ubuntu_release}"
+        docker_args_append_tag_flags "${tag}"
+
+        if [[ "${pritunl_release}" == "${latest_release}" ]]; then
+            OUTPUT_PREFIX="[build/${pritunl_release}/${ubuntu_release}/default/latest]"
+
+            print "🏷️  Tagging as latest"
+            docker_args_append_tag_flags "latest${suffix}"
+        fi
+
+        print "🚧 Building container image"
+        start=${SECONDS}
+        docker buildx build "${DOCKER_ARGS[@]}" "."
+        diff=$((SECONDS - start))
+        duration=$(date -ud "@${diff}" "+%H:%M:%S")
+        print "✅ Done in ${duration}"
+    else
+        print "✅ Already build"
+    fi
 done
 
-if [ "$DEBUG" != "0" ]; then
+if [[ "${DEBUG}" != "0" ]]; then
     debug_complete "Not flushing caches in debug mode"
     exit 0
 fi
@@ -111,12 +118,12 @@ print "🚧 Pruning buildx caches"
 docker buildx inspect --bootstrap "${DOCKER_BUILDX_NAME}" >/dev/null && docker buildx prune --all --force --builder "${DOCKER_BUILDX_NAME}"
 print "✅ Done"
 
-if [ -d "${DOCKER_CACHE_FOLDER}" ]; then
-    if [ -d "${DOCKER_CACHE_FOLDER}/ingest" ]; then
+if [[ -d "${DOCKER_CACHE_FOLDER}" ]]; then
+    if [[ -d "${DOCKER_CACHE_FOLDER}/ingest" ]]; then
         print "🚧 Pruning buildx exports"
         rm -rf -v "${DOCKER_CACHE_FOLDER}"
         print "✅ Done"
     else
-        print "❌ \$DOCKER_CACHE_FOLDER [$DOCKER_CACHE_FOLDER] does not have an /ingest subfolder, might not be a cache folder after all?"
+        print "❌ \$DOCKER_CACHE_FOLDER [${DOCKER_CACHE_FOLDER}] does not have an /ingest subfolder, might not be a cache folder after all?"
     fi
 fi

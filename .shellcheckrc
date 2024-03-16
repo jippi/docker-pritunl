@@ -1,0 +1,8 @@
+# See: https://github.com/koalaman/shellcheck/blob/master/shellcheck.1.md#rc-files
+
+source-path=SCRIPTDIR
+
+# Allow opening any 'source'd file, even if not specified as input
+external-sources=true
+
+enable=all
