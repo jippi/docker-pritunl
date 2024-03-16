@@ -2,6 +2,7 @@
 
 set -o errexit -o nounset -o pipefail
 
+# shellcheck disable=SC2034
 OUTPUT_PREFIX="[setup]"
 
 command -v curl >/dev/null 2>&1 || { action_error_exit "I require the 'docker' command, but it's not installed"; }
@@ -18,6 +19,7 @@ if [[ -f ".env" ]]; then
 fi
 
 # ECR
+# shellcheck disable=SC2312
 if ! curl -L -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["public.ecr.aws"]["auth"] // "N/A"' ~/.docker/config.json)" "https://public.ecr.aws/v2/${REPO_NAME_ECR:?}/manifests/latest" >/dev/null; then
     debug "🔒 Logging in to AWS registry ..."
     aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin "public.ecr.aws/${PUBLIC_ECR_REGISTRY:?}"
@@ -27,6 +29,7 @@ else
 fi
 
 # GitHub
+# shellcheck disable=SC2312
 if ! curl -L -s -S --fail --header "Authorization: Bearer $(jq -r '.auths["ghcr.io"]["auth"] // "N/A"' ~/.docker/config.json)" --header "Accept: application/vnd.oci.image.index.v1+json" "https://ghcr.io/v2/${REPO_NAME_GITHUB:?}/manifests/latest" >/dev/null; then
     # make sure to set CR_PAT env
     CR_PAT=${CR_PAT:-}
@@ -64,10 +67,12 @@ declare -gx DOCKER_TAGS
 
 case "${DOCKER_TAG_SOURCE:?}" in
 "github")
+    # shellcheck disable=SC2312
     DOCKER_TAGS=$(curl -s --header "Authorization: Bearer $(jq -r '.auths["'ghcr.io'"]["auth"]' ~/.docker/config.json)" "https://ghcr.io/v2/${REPO_NAME_GITHUB}/tags/list?n=100" | jq -r '.tags[]' | sort --numeric-sort)
     ;;
 
 "ecr")
+    # shellcheck disable=SC2312
     DOCKER_TAGS=$(curl -s --header "Authorization: Bearer $(jq -r '.auths["'public.ecr.aws'"]["auth"]' ~/.docker/config.json)" "https://public.ecr.aws/v2/${REPO_NAME_ECR}/tags/list?n=100" | jq -r '.tags[]' | sort --numeric-sort)
     ;;
 
@@ -87,7 +92,7 @@ debug_complete "Loading docker tags"
 debug_begin "Loading pritunl/pritunl releases"
 
 declare -gx pritunl_releases
-pritunl_releases=$(curl -s https://api.github.com/repos/pritunl/pritunl/tags | jq -r '.[].name' | sort --reverse --numeric-sort | head -10)
+pritunl_releases=$(curl -sS "https://api.github.com/repos/pritunl/pritunl/tags?per_page=${NUMBER_OF_TAGS:?}" | jq -r '.[].name' | sort --reverse --numeric-sort | head -10)
 
 declare -gx latest_release
 latest_release=$(echo "${pritunl_releases}" | head -1)

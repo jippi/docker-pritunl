@@ -1,7 +1,8 @@
 #syntax=docker/dockerfile:1
 
-ARG UBUNTU_RELEASE
 ARG BUILDKIT_SBOM_SCAN_CONTEXT=true
+ARG TARGETPLATFORM
+ARG UBUNTU_RELEASE
 
 #############################################
 # Base layer
@@ -10,11 +11,12 @@ ARG BUILDKIT_SBOM_SCAN_CONTEXT=true
 FROM ubuntu:$UBUNTU_RELEASE AS base-layer
 
 ARG BUILDKIT_SBOM_SCAN_STAGE=true
+ARG TARGETPLATFORM
 
 COPY --chown=root:root ["docker-install-base.sh", "/root"]
 
-RUN --mount=id=pritunl-apt-lists,target=/var/lib/apt,type=cache \
-    --mount=id=pritunl-apt-cache,target=/var/cache/apt,type=cache \
+RUN --mount=type=cache,id=pritunl-apt-lists-${TARGETPLATFORM},target=/var/lib/apt \
+    --mount=type=cache,id=pritunl-apt-cache-${TARGETPLATFORM},target=/var/cache/apt \
     set -ex \
     && bash /root/docker-install-base.sh \
     && rm /root/docker-install-base.sh
@@ -26,14 +28,15 @@ RUN --mount=id=pritunl-apt-lists,target=/var/lib/apt,type=cache \
 FROM base-layer AS monogodb-layer
 
 ARG BUILDKIT_SBOM_SCAN_STAGE=true
+ARG MONGODB_VERSION
+ARG TARGETPLATFORM
+
+ENV MONGODB_VERSION=${MONGODB_VERSION}
 
 COPY --chown=root:root ["docker-install-mongo.sh", "/root"]
 
-ARG MONGODB_VERSION
-ENV MONGODB_VERSION=${MONGODB_VERSION}
-
-RUN --mount=id=pritunl-apt-lists,target=/var/lib/apt,type=cache \
-    --mount=id=pritunl-apt-cache,target=/var/cache/apt,type=cache \
+RUN --mount=type=cache,id=pritunl-apt-lists-${TARGETPLATFORM},target=/var/lib/apt \
+    --mount=type=cache,id=pritunl-apt-cache-${TARGETPLATFORM},target=/var/cache/apt \
     set -ex \
     && bash /root/docker-install-mongo.sh \
     && rm /root/docker-install-mongo.sh
@@ -46,13 +49,15 @@ FROM monogodb-layer
 
 ARG BUILDKIT_SBOM_SCAN_STAGE=true
 ARG PRITUNL_VERSION
+ARG TARGETPLATFORM
+
 ENV PRITUNL_VERSION=${PRITUNL_VERSION}
 
 COPY --chown=root:root ["docker-install-pritunl.sh", "/root"]
 
-RUN --mount=id=pritunl-apt-lists,target=/var/lib/apt,type=cache \
-    --mount=id=pritunl-apt-cache,target=/var/cache/apt,type=cache \
-    --mount=id=pritunl-cache,target=/pritunl/cache,type=cache \
+RUN --mount=type=cache,id=pritunl-apt-lists-${TARGETPLATFORM},target=/var/lib/apt \
+    --mount=type=cache,id=pritunl-apt-cache-${TARGETPLATFORM},target=/var/cache/apt \
+    --mount=type=cache,id=pritunl-cache-${TARGETPLATFORM},target=/pritunl/cache \
     set -ex \
     && bash /root/docker-install-pritunl.sh \
     && rm /root/docker-install-pritunl.sh

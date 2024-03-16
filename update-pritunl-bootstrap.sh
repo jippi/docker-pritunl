@@ -63,7 +63,7 @@ function docker_args_append_build_flags() {
     DOCKER_ARGS+=(--builder "${DOCKER_BUILDX_NAME:?}")
     DOCKER_ARGS+=(--sbom true)
     DOCKER_ARGS+=(--attest "type=provenance,mode=max")
-    DOCKER_ARGS+=(--platform linux/amd64)
+    DOCKER_ARGS+=(--platform "$(array::join "," "${BUILD_PLATFORMS[@]}")")
     DOCKER_ARGS+=(--cache-from "type=local,src=${DOCKER_CACHE_FOLDER:?}")
     DOCKER_ARGS+=(--cache-to "type=local,dest=${DOCKER_CACHE_FOLDER:?}")
 
@@ -80,4 +80,12 @@ function docker_args_append_build_flags() {
 
 function docker_args_without_mongodb() {
     DOCKER_ARGS+=(--build-arg=MONGODB_VERSION=no)
+}
+
+function array::join() {
+    local separator="$1"
+    shift
+
+    joined=$(printf "${separator}%s" "$@")
+    echo "${joined#"${separator}"}"
 }

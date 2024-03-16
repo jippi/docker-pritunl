@@ -8,10 +8,6 @@ fi
 
 . /etc/lsb-release
 
-declare APT_INSTALL="apt-get install --no-install-recommends --no-install-suggests --yes"
-declare APT_UPDATE="apt-get update --quiet"
-declare WGET="wget --quiet"
-
 case "${DISTRIB_CODENAME}" in
 focal)
     MONGODB_VERSION=5.0
@@ -25,12 +21,12 @@ focal)
 esac
 
 # grab signing key
-${WGET} --output-document=/tmp/monogdb.asc "https://www.mongodb.org/static/pgp/server-${MONGODB_VERSION:?}.asc"
+wget --quiet --output-document=/tmp/monogdb.asc "https://www.mongodb.org/static/pgp/server-${MONGODB_VERSION:?}.asc"
 apt-key add /tmp/monogdb.asc
 
 # setup apt repo
 echo "deb [arch=amd64,arm64] https://repo.mongodb.org/apt/ubuntu ${DISTRIB_CODENAME}/mongodb-org/${MONGODB_VERSION} multiverse" | tee "/etc/apt/sources.list.d/mongodb-org-${MONGODB_VERSION}.list"
 
 # install mongodb
-${APT_UPDATE}
-${APT_INSTALL} mongodb-org="${MONGODB_INSTALL_VERSION}"
+apt-get update --quiet
+apt-get install --no-install-recommends --no-install-suggests --yes mongodb-org="${MONGODB_INSTALL_VERSION}"
