@@ -1,7 +1,6 @@
 <p align="left">
     <a href="README.md">English</a>&nbsp ｜&nbsp 中文
 </p>
-<br><br>
 
 # 在 Docker 中运行 Pritunl
 
