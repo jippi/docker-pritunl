@@ -1,23 +1,24 @@
 <p align="left">
-   English&nbsp ｜&nbsp <a href="README_CN.md">中文</a>
+    <a href="README.md">English</a>&nbsp ｜&nbsp 中文
 </p>
 <br><br>
 
-# Pritunl as a Docker container
+# 在 Docker 中运行 Pritunl
 
-> Pritunl is the best open source alternative to proprietary commercial vpn products such as Aviatrix and Pulse Secure. Create larger cloud vpn networks supporting thousands of concurrent users and get more control over your vpn server without any per-user pricing.
+> Pritunl是与专有商业VPN产品（如Aviatrix和Pulse Secure）相比最优秀的开源替代方案。通过Pritunl，您可以构建支持数千个并发用户的庞大云VPN网络，并且无需为每个用户支付额外费用，从而更好地掌控您的VPN服务器。
 
-## Images
+## docker镜像
 
-All images are published to the following registries
+所有的Docker镜像都在下面表格中：
 
-* 🥇 [GitHub](https://github.com/jippi/docker-pritunl/pkgs/container/docker-pritunl) as `ghcr.io/jippi/docker-pritunl` ⬅️ **Recommended**
-* 🥈 [AWS](https://gallery.ecr.aws/jippi/pritunl) as `public.ecr.aws/jippi/pritunl` ⬅️ Great alternative
-* ⚠️ [Docker Hub](https://hub.docker.com/r/jippi/pritunl/) as `jippi/docker-pritunl` ⬅️ Only use `:latest` as [tags might disappear](https://www.docker.com/blog/scaling-dockers-business-to-serve-millions-more-developers-storage/)
+* 🥇 [GitHub](https://github.com/jippi/docker-pritunl/pkgs/container/docker-pritunl) as `ghcr.io/jippi/docker-pritunl` ⬅️ **推荐**
+* 🥈 [AWS](https://gallery.ecr.aws/jippi/pritunl) as `public.ecr.aws/jippi/pritunl` ⬅️ 绝佳的替代选择
+* ⚠️ [Docker Hub](https://hub.docker.com/r/jippi/pritunl/) as `jippi/docker-pritunl` ⬅️ 只能使用 `:latest` 作为 [tags 才可能拉取到镜像](https://www.docker.com/blog/scaling-dockers-business-to-serve-millions-more-developers-storage/)
 
-Image tags with software specifications and version information can be found in the table below
 
-| **Tag**                   | **Version**                                                     | **OS (Ubuntu)**         | **MongoDB**            | **Wireguard**             |
+不同的规格和版本的镜像标签（tags）可以在下面的表格中找到
+
+| **Tag**                   | **Version**                                                     | **系统 (Ubuntu)**         | **MongoDB**            | **Wireguard**             |
 |-------------------------- |---------------------------------------------------------------- |-----------------------  |:---------------------: |:------------------------: |
 | `latest`                  | [latest †](https://github.com/pritunl/pritunl/releases/latest)  | Jammy (22.04)           |        ✅ (6.x)         |            ✅             |
 | `latest-minimal`          | [latest †](https://github.com/pritunl/pritunl/releases/latest)  | Jammy (22.04)           |           ❌            |            ✅             |
@@ -28,11 +29,11 @@ Image tags with software specifications and version information can be found in 
 | `$version-focal`          | `$version`                                                      | Focal (20.04)           |        ✅ (5.x)         |            ✅             |
 | `$version-focal-minimal`  | `$version`                                                      | Focal (20.04)           |           ❌            |            ✅             |
 
-_† Automation checks for new Pritunl releases nightly (CEST, ~3am), so there might be a day or two latency for most recent release_
+_† 每晚（欧洲中部夏令时，约凌晨3点），自动化程序会检查Pritunl是否有新版本发布，因此最新版本的发布可能会有一两天的延迟。_
 
-## Default user and password
+## 获取默认的用户名和密码
 
-Run the following command to obtain the default login username and password:
+运行下面的命令获取默认的登录用户名和密码：
 
 ```sh
 docker exec -it [container_name] pritunl default-password
@@ -44,18 +45,20 @@ Ex:
 docker exec -it pritunl pritunl default-password
 ```
 
-## Config
+## 配置
 
-Configuration settings that can be used via `--env` / `-e` CLI flag in `docker run`.
+可以通过在`docker run`后面添加`--env` / `-e` 来使用配置。
 
-* `PRITUNL_DONT_WRITE_CONFIG` if set, `/etc/pritunl.conf` will not be auto-written on container start. _Any_ value will stop modifying the configuration file.
-* `PRITUNL_DEBUG` must be `true` or `false` - controls the `debug` config key.
-* `PRITUNL_BIND_ADDR` must be a valid IP on the host - defaults to `0.0.0.0` - controls the `bind_addr` config key.
-* `PRITUNL_MONGODB_URI` URI to mongodb instance, default is starting a local MongoDB instance inside the container. _Any_ value will stop this behavior.
 
-## Usage with embedded MongoDB
 
-I would recommend using a Docker `volume` or `bind` mount for persistent data like shown in the examples below
+* `PRITUNL_DONT_WRITE_CONFIG` 如果设置, `/etc/pritunl.conf` 容器启动时将不会自动被重写. _Any_ value will stop modifying the configuration file.
+* `PRITUNL_DEBUG` 只能为 `true` 或者 `false` - 控制 `debug`配置项，在需要调试时使用.
+* `PRITUNL_BIND_ADDR` 只能是服务器的某个ip - defaults to `0.0.0.0` - 控制 `bind_addr` 配置项，用于指定绑定要监听的ip.
+* `PRITUNL_MONGODB_URI` MongoDB 实例的 URI，如果未指定，默认是在容器内部启动一个本地 MongoDB 实例。 _Any_ value will stop this behavior.
+
+## 使用内置的 MongoDB
+
+我建议使用Docker的`volume`或`bind`挂载来处理持久化数据，如下面的示例所示：
 
 ### docker run (with mongo)
 
@@ -106,11 +109,11 @@ services:
             - './data/mongodb:/var/lib/mongodb'
 ```
 
-## Usage without embedded MongoDB
+## 不使用内容的 MongoDB
 
-I would recommend using a Docker `volume` or `bind` mount for persistent data like shown in the examples below
+我建议使用Docker的`volume`或`bind`挂载来处理持久化数据，如下面的示例所示：
 
-If you have MongoDB running somewhere else you'd like to use, you can do so through the `PRITUNL_MONGODB_URI` env var like shown below
+如果您想要使用其他地方运行的MongoDB，您可以通过设置`PRITUNL_MONGODB_URI`环境变量来实现，就像下面的示例中所展示的那样。
 
 ### docker run (without mongo)
 
@@ -142,7 +145,9 @@ mkdir -p $(data_dir)/pritunl
 touch $(data_dir)/pritunl.conf
 ```
 
-and then the following `docker-compose.yaml` file in `$(pwd)` followed by `docker-compose up -d`
+在当前目录(`$(pwd)`)将下面内容添加到`docker-compose.yaml`文件中，然后执行`docker-compose up -d`
+
+
 
 ```yaml
 version: '3.3'
@@ -164,7 +169,7 @@ services:
 
 ## Network mode
 
-If you don't want to use `network=host`, then replace the `--network=host` CLI flag with the following ports + any ports you need for your configured Pritunl servers.
+如果您不想使用`network=host`，请将`--network=host`命令行选项 替换为以下端口加上您配置的Pritunl服务器所需的任何端口。
 
 ```sh
     --publish 80:80 \
@@ -173,7 +178,8 @@ If you don't want to use `network=host`, then replace the `--network=host` CLI f
     --publish 1194:1194/udp \
 ```
 
-or for `docker-compose`
+如果在使用的是 `docker-compose`，请将`network_mode: host` 替换为以下端口加上您配置的Pritunl服务器所需的任何端口。
+
 
 ```yaml
          ports:
@@ -183,21 +189,21 @@ or for `docker-compose`
             - '1194:1194/udp'
 ```
 
-## Upgrading MongoDB
+## 升级 MongoDB
 
-**IMPORTANT**: Stop your `pritunl` docker container (`docker stop pritunl`) before doing these steps
+**重要**: 停止你的 `pritunl` docker 容器 (`docker stop pritunl`) 在执行下面步骤前
 
-The pattern for upgrading are basically the same, with the only variance being the MongoDB version number, the docs can be found here:
+升级的模式基本相同，唯一的变化是MongoDB的版本号，文档可以在这里找到：
 
-* [Upgrade from 3.2 to 3.6](https://www.mongodb.com/docs/manual/release-notes/3.6-upgrade-standalone/#prerequisites)
-* [Upgrade from 3.6 to 4.0](https://www.mongodb.com/docs/manual/release-notes/4.0-upgrade-standalone/#prerequisites)
-* [Upgrade from 4.0 to 4.2](https://www.mongodb.com/docs/manual/release-notes/4.2-upgrade-standalone/#prerequisites)
-* [Upgrade from 4.2 to 4.4](https://www.mongodb.com/docs/manual/release-notes/4.4-upgrade-standalone/#prerequisites) <- stop here if you use `Bionic (18.04)`
-* [Upgrade from 4.4 to 5.0](https://www.mongodb.com/docs/manual/release-notes/5.0-upgrade-standalone/#prerequisites) <- stop here if you use `Focal (20.04)`
+* [从 3.2 升级到 3.6](https://www.mongodb.com/docs/manual/release-notes/3.6-upgrade-standalone/#prerequisites)
+* [从 from 3.6 升级到 4.0](https://www.mongodb.com/docs/manual/release-notes/4.0-upgrade-standalone/#prerequisites)
+* [从 from 4.0 升级到 4.2](https://www.mongodb.com/docs/manual/release-notes/4.2-upgrade-standalone/#prerequisites)
+* [从 from 4.2 升级到 4.4](https://www.mongodb.com/docs/manual/release-notes/4.4-upgrade-standalone/#prerequisites) <- 不能升级了，如果你使用的是 `Bionic (18.04)`
+* [从 from 4.4 升级到 5.0](https://www.mongodb.com/docs/manual/release-notes/5.0-upgrade-standalone/#prerequisites) <- 不能升级了，如果你使用的是 `Focal (20.04)`
 
-### Automated script
+### 自动升级脚本
 
-I've made a small script called [mongo-upgrade.sh](https://github.com/jippi/docker-pritunl/blob/master/mongo-upgrade.sh) that you can download to your server and run. It will make an best-effort to guide you through the steps needed to upgrade.
+我制作了一个小脚本叫做 [mongo-upgrade.sh](https://github.com/jippi/docker-pritunl/blob/master/mongo-upgrade.sh) ，您可以下载到您的服务器并运行它。它会尽力引导您完成升级所需的步骤。
 
 ```sh
 # fetch the script
@@ -210,13 +216,13 @@ vi mongo-upgrade.sh
 ./mongo-upgrade.sh
 ```
 
-### Manual upgrade
+### 手动升级
 
-Assuming you are coming from `3.2`, your next version is `3.6` so you need to set `$NEXT_VERSION_TO_UPGRADE_TO=3.6` and run these commands.
+假设你的版本是 `3.2`, 要升级的版不能是 `3.6` 你需要设置环境变量 `$NEXT_VERSION_TO_UPGRADE_TO=3.6` 并且运行下面命令。
 
-You can see the list of versions you would need to run with the script above.
+您可以在上述脚本中查看您需要运行的版本列表。
 
-Example path from `3.2` to `4.4` would mean running the script once per `NEXT_VERSION_TO_UPGRADE_TO` with the values below
+从3.2版本升级到4.4版本的示例路径意味着需要按照以下值的每个`NEXT_VERSION_TO_UPGRADE_TO`运行脚本一次：
 
 * `NEXT_VERSION_TO_UPGRADE_TO=3.2`
 * `NEXT_VERSION_TO_UPGRADE_TO=3.6`
@@ -253,6 +259,6 @@ docker rm -f temp-mongo-server
 docker run --rm --volume ${MONGODB_DATA_PATH}:/data/db mongo:${NEXT_VERSION_TO_UPGRADE_TO} --repair
 ```
 
-## Further help and docs
+## 进一步的帮助和文档请参考以下内容：
 
-For any help specific to Pritunl please have a look at <http://pritunl.com> and <https://github.com/pritunl/pritunl>
+如果需要有关Pritunl的特定帮助，请查看以下网址：<http://pritunl.com> 和 <https://github.com/pritunl/pritunl>
