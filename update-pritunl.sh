@@ -41,6 +41,35 @@ for pritunl_release in ${pritunl_releases}; do
         debug "👷 Processing"
 
         ####################################################################################
+        # build with mongo (default container)
+        ####################################################################################
+
+        # shellcheck disable=SC2310
+        if ! has_tag "${tag}"; then
+            docker_args_reset
+            docker_args_append_build_flags "${pritunl_release}" "${ubuntu_release}"
+            docker_args_append_tag_flags "${tag}"
+
+            if [[ "${pritunl_release}" == "${latest_release}" ]]; then
+                OUTPUT_PREFIX="[build/${pritunl_release}/${ubuntu_release}/default/latest]"
+
+                print "🏷️  Tagging as latest (latest${suffix})"
+                docker_args_append_tag_flags "latest${suffix}"
+            fi
+
+            debug "Building with tags: [${DOCKER_ARGS[*]}]"
+
+            print "🚧 Building container image"
+            start=${SECONDS}
+            docker buildx build "${DOCKER_ARGS[@]}" "."
+            diff=$((SECONDS - start))
+            duration=$(date -ud "@${diff}" "+%H:%M:%S")
+            print "✅ Done in ${duration}"
+        else
+            print "✅ Already build"
+        fi
+
+        ####################################################################################
         # build without mongo ("minimal" tag)
         ####################################################################################
 
@@ -58,7 +87,7 @@ for pritunl_release in ${pritunl_releases}; do
 
             if [[ "${pritunl_release}" == "${latest_release}" ]]; then
                 OUTPUT_PREFIX="[build/${pritunl_release}/${ubuntu_release}/minimal/latest]"
-                print "🏷️  Tagging as latest"
+                print "🏷️  Tagging as latest (latest${suffix}-minimal)"
                 docker_args_append_tag_flags "latest${suffix}-minimal"
             fi
 
@@ -74,39 +103,6 @@ for pritunl_release in ${pritunl_releases}; do
             print "✅ Already build"
         fi
     done
-
-    ####################################################################################
-    # build with mongo (default container)
-    ####################################################################################
-
-    # shellcheck disable=SC2310
-    if ! has_tag "${tag}"; then
-        if ! supports_mongodb "${ubuntu_release}"; then
-            print "🚫 Skipping: ${ubuntu_release} does not support MongoDB"
-
-            continue
-        fi
-
-        docker_args_reset
-        docker_args_append_build_flags "${pritunl_release}" "${ubuntu_release}"
-        docker_args_append_tag_flags "${tag}"
-
-        if [[ "${pritunl_release}" == "${latest_release}" ]]; then
-            OUTPUT_PREFIX="[build/${pritunl_release}/${ubuntu_release}/default/latest]"
-
-            print "🏷️  Tagging as latest"
-            docker_args_append_tag_flags "latest${suffix}"
-        fi
-
-        print "🚧 Building container image"
-        start=${SECONDS}
-        docker buildx build "${DOCKER_ARGS[@]}" "."
-        diff=$((SECONDS - start))
-        duration=$(date -ud "@${diff}" "+%H:%M:%S")
-        print "✅ Done in ${duration}"
-    else
-        print "✅ Already build"
-    fi
 done
 
 if [[ "${DEBUG:?}" != "0" ]]; then
