@@ -10,23 +10,22 @@
 
 所有的Docker镜像都在下面表格中：
 
-* 🥇 [GitHub](https://github.com/jippi/docker-pritunl/pkgs/container/docker-pritunl) as `ghcr.io/jippi/docker-pritunl` ⬅️ **推荐**
-* 🥈 [AWS](https://gallery.ecr.aws/jippi/pritunl) as `public.ecr.aws/jippi/pritunl` ⬅️ 绝佳的替代选择
-* ⚠️ [Docker Hub](https://hub.docker.com/r/jippi/pritunl/) as `jippi/docker-pritunl` ⬅️ 只能使用 `:latest` 作为 [tags 才可能拉取到镜像](https://www.docker.com/blog/scaling-dockers-business-to-serve-millions-more-developers-storage/)
-
+- 🥇 [GitHub](https://github.com/jippi/docker-pritunl/pkgs/container/docker-pritunl) as `ghcr.io/jippi/docker-pritunl` ⬅️ **推荐**
+- 🥈 [AWS](https://gallery.ecr.aws/jippi/pritunl) as `public.ecr.aws/jippi/pritunl` ⬅️ 绝佳的替代选择
+- ⚠️ [Docker Hub](https://hub.docker.com/r/jippi/pritunl/) as `jippi/docker-pritunl` ⬅️ 只能使用 `:latest` 作为 [tags 才可能拉取到镜像](https://www.docker.com/blog/scaling-dockers-business-to-serve-millions-more-developers-storage/)
 
 不同的规格和版本的镜像标签（tags）可以在下面的表格中找到
 
-| **Tag**                   | **Version**                                                     | **系统 (Ubuntu)**         | **MongoDB**            | **Wireguard**             |
-|-------------------------- |---------------------------------------------------------------- |-----------------------  |:---------------------: |:------------------------: |
-| `latest`                  | [latest †](https://github.com/pritunl/pritunl/releases/latest)  | Jammy (22.04)           |        ✅ (6.x)         |            ✅             |
-| `latest-minimal`          | [latest †](https://github.com/pritunl/pritunl/releases/latest)  | Jammy (22.04)           |           ❌            |            ✅             |
-| `latest-focal`            | [latest †](https://github.com/pritunl/pritunl/releases/latest)  | Focal (20.04)           |        ✅ (5.x)         |            ✅             |
-| `latest-focal-minimal`    | [latest †](https://github.com/pritunl/pritunl/releases/latest)  | Focal (20.04)           |           ❌            |            ✅             |
-| `$version`                | `$version`                                                      | Jammy (22.04)           |        ✅ (6.x)         |            ✅             |
-| `$version-minimal`        | `$version`                                                      | Jammy (22.04)           |           ❌            |            ✅             |
-| `$version-focal`          | `$version`                                                      | Focal (20.04)           |        ✅ (5.x)         |            ✅             |
-| `$version-focal-minimal`  | `$version`                                                      | Focal (20.04)           |           ❌            |            ✅             |
+| **Tag**                  | **Version**                                                    | **系统 (Ubuntu)** | **MongoDB** | **Wireguard** |
+| ------------------------ | -------------------------------------------------------------- | ----------------- | :---------: | :-----------: |
+| `latest`                 | [latest †](https://github.com/pritunl/pritunl/releases/latest) | Jammy (22.04)     |  ✅ (6.x)   |      ✅       |
+| `latest-minimal`         | [latest †](https://github.com/pritunl/pritunl/releases/latest) | Jammy (22.04)     |     ❌      |      ✅       |
+| `latest-focal`           | [latest †](https://github.com/pritunl/pritunl/releases/latest) | Focal (20.04)     |  ✅ (5.x)   |      ✅       |
+| `latest-focal-minimal`   | [latest †](https://github.com/pritunl/pritunl/releases/latest) | Focal (20.04)     |     ❌      |      ✅       |
+| `$version`               | `$version`                                                     | Jammy (22.04)     |  ✅ (6.x)   |      ✅       |
+| `$version-minimal`       | `$version`                                                     | Jammy (22.04)     |     ❌      |      ✅       |
+| `$version-focal`         | `$version`                                                     | Focal (20.04)     |  ✅ (5.x)   |      ✅       |
+| `$version-focal-minimal` | `$version`                                                     | Focal (20.04)     |     ❌      |      ✅       |
 
 _† 每晚（欧洲中部夏令时，约凌晨3点），自动化程序会检查Pritunl是否有新版本发布，因此最新版本的发布可能会有一两天的延迟。_
 
@@ -48,12 +47,10 @@ docker exec -it pritunl pritunl default-password
 
 可以通过在`docker run`后面添加`--env` / `-e` 来使用配置。
 
-
-
-* `PRITUNL_DONT_WRITE_CONFIG` 如果设置, `/etc/pritunl.conf` 容器启动时将不会自动被重写. _Any_ value will stop modifying the configuration file.
-* `PRITUNL_DEBUG` 只能为 `true` 或者 `false` - 控制 `debug`配置项，在需要调试时使用.
-* `PRITUNL_BIND_ADDR` 只能是服务器的某个ip - defaults to `0.0.0.0` - 控制 `bind_addr` 配置项，用于指定绑定要监听的ip.
-* `PRITUNL_MONGODB_URI` MongoDB 实例的 URI，如果未指定，默认是在容器内部启动一个本地 MongoDB 实例。 _Any_ value will stop this behavior.
+- `PRITUNL_DONT_WRITE_CONFIG` 如果设置, `/etc/pritunl.conf` 容器启动时将不会自动被重写. _Any_ value will stop modifying the configuration file.
+- `PRITUNL_DEBUG` 只能为 `true` 或者 `false` - 控制 `debug`配置项，在需要调试时使用.
+- `PRITUNL_BIND_ADDR` 只能是服务器的某个ip - defaults to `0.0.0.0` - 控制 `bind_addr` 配置项，用于指定绑定要监听的ip.
+- `PRITUNL_MONGODB_URI` MongoDB 实例的 URI，如果未指定，默认是在容器内部启动一个本地 MongoDB 实例。 _Any_ value will stop this behavior.
 
 ## 使用内置的 MongoDB
 
@@ -64,8 +61,8 @@ docker exec -it pritunl pritunl default-password
 ```sh
 data_dir=$(pwd)/data
 
-mkdir -p $(data_dir)/pritunl $(data_dir)/mongodb
-touch $(data_dir)/pritunl.conf
+mkdir -p ${data_dir}/pritunl ${data_dir}/mongodb
+touch ${data_dir}/pritunl.conf
 
 docker run \
     --name pritunl \
@@ -74,9 +71,9 @@ docker run \
     --dns 127.0.0.1 \
     --restart=unless-stopped \
     --detach \
-    --volume $(data_dir)/pritunl.conf:/etc/pritunl.conf \
-    --volume $(data_dir)/pritunl:/var/lib/pritunl \
-    --volume $(data_dir)/mongodb:/var/lib/mongodb \
+    --volume ${data_dir}/pritunl.conf:/etc/pritunl.conf \
+    --volume ${data_dir}/pritunl:/var/lib/pritunl \
+    --volume ${data_dir}/mongodb:/var/lib/mongodb \
     ghcr.io/jippi/docker-pritunl
 ```
 
@@ -85,14 +82,14 @@ docker run \
 ```sh
 data_dir=$(pwd)/data
 
-mkdir -p $(data_dir)/pritunl $(data_dir)/mongodb
-touch $(data_dir)/pritunl.conf
+mkdir -p ${data_dir}/pritunl ${data_dir}/mongodb
+touch ${data_dir}/pritunl.conf
 ```
 
 and then the following `docker-compose.yaml` file in `$(pwd)` followed by `docker-compose up -d`
 
 ```yaml
-version: '3.3'
+version: "3.3"
 services:
     pritunl:
         container_name: pritunl
@@ -103,9 +100,9 @@ services:
         dns:
             - 127.0.0.1
         volumes:
-            - './data/pritunl.conf:/etc/pritunl.conf'
-            - './data/pritunl:/var/lib/pritunl'
-            - './data/mongodb:/var/lib/mongodb'
+            - "./data/pritunl.conf:/etc/pritunl.conf"
+            - "./data/pritunl:/var/lib/pritunl"
+            - "./data/mongodb:/var/lib/mongodb"
 ```
 
 ## 不使用内容的 MongoDB
@@ -119,8 +116,8 @@ services:
 ```sh
 data_dir=$(pwd)/data
 
-mkdir -p $(data_dir)/pritunl
-touch $(data_dir)/pritunl.conf
+mkdir -p ${data_dir}/pritunl
+touch ${data_dir}/pritunl.conf
 
 docker run \
     --name pritunl \
@@ -129,8 +126,8 @@ docker run \
     --dns 127.0.0.1 \
     --restart=unless-stopped \
     --detach \
-    --volume $(data_dir)/pritunl.conf:/etc/pritunl.conf \
-    --volume $(data_dir)/pritunl:/var/lib/pritunl \
+    --volume ${data_dir}/pritunl.conf:/etc/pritunl.conf \
+    --volume ${data_dir}/pritunl:/var/lib/pritunl \
     --env PRITUNL_MONGODB_URI=mongodb://some-mongo-host:27017/pritunl \
     ghcr.io/jippi/docker-pritunl
 ```
@@ -140,16 +137,14 @@ docker run \
 ```sh
 data_dir=$(pwd)/data
 
-mkdir -p $(data_dir)/pritunl
-touch $(data_dir)/pritunl.conf
+mkdir -p ${data_dir}/pritunl
+touch ${data_dir}/pritunl.conf
 ```
 
 在当前目录(`$(pwd)`)将下面内容添加到`docker-compose.yaml`文件中，然后执行`docker-compose up -d`
 
-
-
 ```yaml
-version: '3.3'
+version: "3.3"
 services:
     pritunl:
         container_name: pritunl
@@ -162,8 +157,8 @@ services:
         environment:
             - PRITUNL_MONGODB_URI=mongodb://some-mongo-host:27017/pritunl
         volumes:
-            - './data/pritunl.conf:/etc/pritunl.conf'
-            - './data/pritunl:/var/lib/pritunl'
+            - "./data/pritunl.conf:/etc/pritunl.conf"
+            - "./data/pritunl:/var/lib/pritunl"
 ```
 
 ## Network mode
@@ -179,13 +174,12 @@ services:
 
 如果在使用的是 `docker-compose`，请将`network_mode: host` 替换为以下端口加上您配置的Pritunl服务器所需的任何端口。
 
-
 ```yaml
-         ports:
-            - '80:80'
-            - '443:443'
-            - '1194:1194'
-            - '1194:1194/udp'
+ports:
+    - "80:80"
+    - "443:443"
+    - "1194:1194"
+    - "1194:1194/udp"
 ```
 
 ## 升级 MongoDB
@@ -194,11 +188,11 @@ services:
 
 升级的模式基本相同，唯一的变化是MongoDB的版本号，文档可以在这里找到：
 
-* [从 3.2 升级到 3.6](https://www.mongodb.com/docs/manual/release-notes/3.6-upgrade-standalone/#prerequisites)
-* [从 from 3.6 升级到 4.0](https://www.mongodb.com/docs/manual/release-notes/4.0-upgrade-standalone/#prerequisites)
-* [从 from 4.0 升级到 4.2](https://www.mongodb.com/docs/manual/release-notes/4.2-upgrade-standalone/#prerequisites)
-* [从 from 4.2 升级到 4.4](https://www.mongodb.com/docs/manual/release-notes/4.4-upgrade-standalone/#prerequisites) <- 不能升级了，如果你使用的是 `Bionic (18.04)`
-* [从 from 4.4 升级到 5.0](https://www.mongodb.com/docs/manual/release-notes/5.0-upgrade-standalone/#prerequisites) <- 不能升级了，如果你使用的是 `Focal (20.04)`
+- [从 3.2 升级到 3.6](https://www.mongodb.com/docs/manual/release-notes/3.6-upgrade-standalone/#prerequisites)
+- [从 from 3.6 升级到 4.0](https://www.mongodb.com/docs/manual/release-notes/4.0-upgrade-standalone/#prerequisites)
+- [从 from 4.0 升级到 4.2](https://www.mongodb.com/docs/manual/release-notes/4.2-upgrade-standalone/#prerequisites)
+- [从 from 4.2 升级到 4.4](https://www.mongodb.com/docs/manual/release-notes/4.4-upgrade-standalone/#prerequisites) <- 不能升级了，如果你使用的是 `Bionic (18.04)`
+- [从 from 4.4 升级到 5.0](https://www.mongodb.com/docs/manual/release-notes/5.0-upgrade-standalone/#prerequisites) <- 不能升级了，如果你使用的是 `Focal (20.04)`
 
 ### 自动升级脚本
 
@@ -223,11 +217,11 @@ vi mongo-upgrade.sh
 
 从3.2版本升级到4.4版本的示例路径意味着需要按照以下值的每个`NEXT_VERSION_TO_UPGRADE_TO`运行脚本一次：
 
-* `NEXT_VERSION_TO_UPGRADE_TO=3.2`
-* `NEXT_VERSION_TO_UPGRADE_TO=3.6`
-* `NEXT_VERSION_TO_UPGRADE_TO=4.0`
-* `NEXT_VERSION_TO_UPGRADE_TO=4.2`
-* `NEXT_VERSION_TO_UPGRADE_TO=4.4`
+- `NEXT_VERSION_TO_UPGRADE_TO=3.2`
+- `NEXT_VERSION_TO_UPGRADE_TO=3.6`
+- `NEXT_VERSION_TO_UPGRADE_TO=4.0`
+- `NEXT_VERSION_TO_UPGRADE_TO=4.2`
+- `NEXT_VERSION_TO_UPGRADE_TO=4.4`
 
 ```sh
 NEXT_VERSION_TO_UPGRADE_TO=

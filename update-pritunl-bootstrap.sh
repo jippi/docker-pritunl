@@ -37,9 +37,11 @@ function action_error_exit() {
 function has_tag() {
     [[ "${REBUILD_TAGS:?}" -eq "1" ]] && return 1
 
-    check=$(echo "${DOCKER_TAGS:?}" | grep "^$1$")
+    if echo "${DOCKER_TAGS:?}" | grep -Fqx -- "$1"; then
+        return 0
+    fi
 
-    [[ "${check}" != "" ]]
+    return 1
 }
 
 function docker_args_reset() {

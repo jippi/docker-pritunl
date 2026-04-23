@@ -13,8 +13,10 @@ apt-get update --quiet
 apt-get install --no-install-recommends --no-install-suggests --yes wget gnupg ca-certificates
 
 # setup pritunl apt repo
-echo "deb http://repo.pritunl.com/stable/apt ${DISTRIB_CODENAME} main" >/etc/apt/sources.list.d/pritunl.list
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7AE645C0CF8E292A
+wget --quiet --output-document=- "https://raw.githubusercontent.com/pritunl/pgp/master/pritunl_repo_pub.asc" \
+	| gpg --dearmor --yes --output /usr/share/keyrings/pritunl-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/pritunl-archive-keyring.gpg] http://repo.pritunl.com/stable/apt ${DISTRIB_CODENAME} main" \
+	>/etc/apt/sources.list.d/pritunl.list
 
 # configure timezone to be UTC by default
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
