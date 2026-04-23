@@ -17,6 +17,14 @@ if [ -z "$PRITUNL_DEBUG" ]; then
     PRITUNL_DEBUG="false"
 fi
 
+case "$PRITUNL_DEBUG" in
+    true|false) ;;
+    *)
+        echo "PRITUNL_DEBUG must be true or false" >&2
+        exit 1
+        ;;
+esac
+
 # allow changing bind addr
 if [ -z "$PRITUNL_BIND_ADDR" ]; then
     PRITUNL_BIND_ADDR="0.0.0.0"
@@ -28,20 +36,27 @@ if [ -z "$PRITUNL_MONGODB_URI" ]; then
     PRITUNL_MONGODB_URI="mongodb://localhost:27017/pritunl"
 fi
 
+json_escape() {
+    printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e ':a;N;$!ba;s/\n/\\n/g'
+}
+
 if [ -z "$PRITUNL_DONT_WRITE_CONFIG" ]; then
-    cat << EOF > /etc/pritunl.conf
-    {
-        "mongodb_uri": "$PRITUNL_MONGODB_URI",
-        "server_key_path": "/var/lib/pritunl/pritunl.key",
-        "log_path": "/var/log/pritunl.log",
-        "static_cache": true,
-        "server_cert_path": "/var/lib/pritunl/pritunl.crt",
-        "temp_path": "/tmp/pritunl_%r",
-        "bind_addr": "$PRITUNL_BIND_ADDR",
-        "debug": $PRITUNL_DEBUG,
-        "www_path": "/usr/share/pritunl/www",
-        "local_address_interface": "auto"
-    }
+    mongodb_uri_escaped=$(json_escape "$PRITUNL_MONGODB_URI")
+    bind_addr_escaped=$(json_escape "$PRITUNL_BIND_ADDR")
+
+    cat <<EOF > /etc/pritunl.conf
+{
+    "mongodb_uri": "${mongodb_uri_escaped}",
+    "server_key_path": "/var/lib/pritunl/pritunl.key",
+    "log_path": "/var/log/pritunl.log",
+    "static_cache": true,
+    "server_cert_path": "/var/lib/pritunl/pritunl.crt",
+    "temp_path": "/tmp/pritunl_%r",
+    "bind_addr": "${bind_addr_escaped}",
+    "debug": ${PRITUNL_DEBUG},
+    "www_path": "/usr/share/pritunl/www",
+    "local_address_interface": "auto"
+}
 EOF
 
 fi
