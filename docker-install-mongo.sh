@@ -21,11 +21,12 @@ focal)
 esac
 
 # grab signing key
-wget --quiet --output-document=/tmp/monogdb.asc "https://www.mongodb.org/static/pgp/server-${MONGODB_VERSION:?}.asc"
-apt-key add /tmp/monogdb.asc
+wget --quiet --output-document=- "https://www.mongodb.org/static/pgp/server-${MONGODB_VERSION:?}.asc" \
+    | gpg --dearmor --yes --output "/usr/share/keyrings/mongodb-server-${MONGODB_VERSION}.gpg"
 
 # setup apt repo
-echo "deb [arch=amd64,arm64] https://repo.mongodb.org/apt/ubuntu ${DISTRIB_CODENAME}/mongodb-org/${MONGODB_VERSION} multiverse" | tee "/etc/apt/sources.list.d/mongodb-org-${MONGODB_VERSION}.list"
+echo "deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-${MONGODB_VERSION}.gpg] https://repo.mongodb.org/apt/ubuntu ${DISTRIB_CODENAME}/mongodb-org/${MONGODB_VERSION} multiverse" \
+    >"/etc/apt/sources.list.d/mongodb-org-${MONGODB_VERSION}.list"
 
 # install mongodb
 apt-get update --quiet
