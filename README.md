@@ -10,22 +10,22 @@
 
 All images are published to the following registries
 
-* 🥇 [GitHub](https://github.com/jippi/docker-pritunl/pkgs/container/docker-pritunl) as `ghcr.io/jippi/docker-pritunl` ⬅️ **Recommended**
-* 🥈 [AWS](https://gallery.ecr.aws/jippi/pritunl) as `public.ecr.aws/jippi/pritunl` ⬅️ Great alternative
-* ⚠️ [Docker Hub](https://hub.docker.com/r/jippi/pritunl/) as `jippi/docker-pritunl` ⬅️ Only use `:latest` as [tags might disappear](https://www.docker.com/blog/scaling-dockers-business-to-serve-millions-more-developers-storage/)
+- 🥇 [GitHub](https://github.com/jippi/docker-pritunl/pkgs/container/docker-pritunl) as `ghcr.io/jippi/docker-pritunl` ⬅️ **Recommended**
+- 🥈 [AWS](https://gallery.ecr.aws/jippi/pritunl) as `public.ecr.aws/jippi/pritunl` ⬅️ Great alternative
+- ⚠️ [Docker Hub](https://hub.docker.com/r/jippi/pritunl/) as `jippi/docker-pritunl` ⬅️ Only use `:latest` as [tags might disappear](https://www.docker.com/blog/scaling-dockers-business-to-serve-millions-more-developers-storage/)
 
 Image tags with software specifications and version information can be found in the table below
 
-| **Tag**                   | **Version**                                                     | **OS (Ubuntu)**         | **MongoDB**            | **Wireguard**             |
-|-------------------------- |---------------------------------------------------------------- |-----------------------  |:---------------------: |:------------------------: |
-| `latest`                  | [latest †](https://github.com/pritunl/pritunl/releases/latest)  | Jammy (22.04)           |        ✅ (6.x)         |            ✅             |
-| `latest-minimal`          | [latest †](https://github.com/pritunl/pritunl/releases/latest)  | Jammy (22.04)           |           ❌            |            ✅             |
-| `latest-focal`            | [latest †](https://github.com/pritunl/pritunl/releases/latest)  | Focal (20.04)           |        ✅ (5.x)         |            ✅             |
-| `latest-focal-minimal`    | [latest †](https://github.com/pritunl/pritunl/releases/latest)  | Focal (20.04)           |           ❌            |            ✅             |
-| `$version`                | `$version`                                                      | Jammy (22.04)           |        ✅ (6.x)         |            ✅             |
-| `$version-minimal`        | `$version`                                                      | Jammy (22.04)           |           ❌            |            ✅             |
-| `$version-focal`          | `$version`                                                      | Focal (20.04)           |        ✅ (5.x)         |            ✅             |
-| `$version-focal-minimal`  | `$version`                                                      | Focal (20.04)           |           ❌            |            ✅             |
+| **Tag**                  | **Version**                                                    | **OS (Ubuntu)** | **MongoDB** | **Wireguard** |
+| ------------------------ | -------------------------------------------------------------- | --------------- | :---------: | :-----------: |
+| `latest`                 | [latest †](https://github.com/pritunl/pritunl/releases/latest) | Jammy (22.04)   |  ✅ (6.x)   |      ✅       |
+| `latest-minimal`         | [latest †](https://github.com/pritunl/pritunl/releases/latest) | Jammy (22.04)   |     ❌      |      ✅       |
+| `latest-focal`           | [latest †](https://github.com/pritunl/pritunl/releases/latest) | Focal (20.04)   |  ✅ (5.x)   |      ✅       |
+| `latest-focal-minimal`   | [latest †](https://github.com/pritunl/pritunl/releases/latest) | Focal (20.04)   |     ❌      |      ✅       |
+| `$version`               | `$version`                                                     | Jammy (22.04)   |  ✅ (6.x)   |      ✅       |
+| `$version-minimal`       | `$version`                                                     | Jammy (22.04)   |     ❌      |      ✅       |
+| `$version-focal`         | `$version`                                                     | Focal (20.04)   |  ✅ (5.x)   |      ✅       |
+| `$version-focal-minimal` | `$version`                                                     | Focal (20.04)   |     ❌      |      ✅       |
 
 _† Automation checks for new Pritunl releases nightly (CEST, ~3am), so there might be a day or two latency for most recent release_
 
@@ -47,10 +47,10 @@ docker exec -it pritunl pritunl default-password
 
 Configuration settings that can be used via `--env` / `-e` CLI flag in `docker run`.
 
-* `PRITUNL_DONT_WRITE_CONFIG` if set, `/etc/pritunl.conf` will not be auto-written on container start. _Any_ value will stop modifying the configuration file.
-* `PRITUNL_DEBUG` must be `true` or `false` - controls the `debug` config key.
-* `PRITUNL_BIND_ADDR` must be a valid IP on the host - defaults to `0.0.0.0` - controls the `bind_addr` config key.
-* `PRITUNL_MONGODB_URI` URI to mongodb instance, default is starting a local MongoDB instance inside the container. _Any_ value will stop this behavior.
+- `PRITUNL_DONT_WRITE_CONFIG` if set, `/etc/pritunl.conf` will not be auto-written on container start. _Any_ value will stop modifying the configuration file.
+- `PRITUNL_DEBUG` must be `true` or `false` - controls the `debug` config key.
+- `PRITUNL_BIND_ADDR` must be a valid IP on the host - defaults to `0.0.0.0` - controls the `bind_addr` config key.
+- `PRITUNL_MONGODB_URI` URI to mongodb instance, default is starting a local MongoDB instance inside the container. _Any_ value will stop this behavior.
 
 ## Usage with embedded MongoDB
 
@@ -89,7 +89,7 @@ touch ${data_dir}/pritunl.conf
 and then the following `docker-compose.yaml` file in `$(pwd)` followed by `docker-compose up -d`
 
 ```yaml
-version: '3.3'
+version: "3.3"
 services:
     pritunl:
         container_name: pritunl
@@ -100,9 +100,9 @@ services:
         dns:
             - 127.0.0.1
         volumes:
-            - './data/pritunl.conf:/etc/pritunl.conf'
-            - './data/pritunl:/var/lib/pritunl'
-            - './data/mongodb:/var/lib/mongodb'
+            - "./data/pritunl.conf:/etc/pritunl.conf"
+            - "./data/pritunl:/var/lib/pritunl"
+            - "./data/mongodb:/var/lib/mongodb"
 ```
 
 ## Usage without embedded MongoDB
@@ -144,7 +144,7 @@ touch ${data_dir}/pritunl.conf
 and then the following `docker-compose.yaml` file in `$(pwd)` followed by `docker-compose up -d`
 
 ```yaml
-version: '3.3'
+version: "3.3"
 services:
     pritunl:
         container_name: pritunl
@@ -157,8 +157,8 @@ services:
         environment:
             - PRITUNL_MONGODB_URI=mongodb://some-mongo-host:27017/pritunl
         volumes:
-            - './data/pritunl.conf:/etc/pritunl.conf'
-            - './data/pritunl:/var/lib/pritunl'
+            - "./data/pritunl.conf:/etc/pritunl.conf"
+            - "./data/pritunl:/var/lib/pritunl"
 ```
 
 ## Network mode
@@ -175,11 +175,11 @@ If you don't want to use `network=host`, then replace the `--network=host` CLI f
 or for `docker-compose`
 
 ```yaml
-         ports:
-            - '80:80'
-            - '443:443'
-            - '1194:1194'
-            - '1194:1194/udp'
+ports:
+    - "80:80"
+    - "443:443"
+    - "1194:1194"
+    - "1194:1194/udp"
 ```
 
 ## Upgrading MongoDB
@@ -188,11 +188,11 @@ or for `docker-compose`
 
 The pattern for upgrading are basically the same, with the only variance being the MongoDB version number, the docs can be found here:
 
-* [Upgrade from 3.2 to 3.6](https://www.mongodb.com/docs/manual/release-notes/3.6-upgrade-standalone/#prerequisites)
-* [Upgrade from 3.6 to 4.0](https://www.mongodb.com/docs/manual/release-notes/4.0-upgrade-standalone/#prerequisites)
-* [Upgrade from 4.0 to 4.2](https://www.mongodb.com/docs/manual/release-notes/4.2-upgrade-standalone/#prerequisites)
-* [Upgrade from 4.2 to 4.4](https://www.mongodb.com/docs/manual/release-notes/4.4-upgrade-standalone/#prerequisites) <- stop here if you use `Bionic (18.04)`
-* [Upgrade from 4.4 to 5.0](https://www.mongodb.com/docs/manual/release-notes/5.0-upgrade-standalone/#prerequisites) <- stop here if you use `Focal (20.04)`
+- [Upgrade from 3.2 to 3.6](https://www.mongodb.com/docs/manual/release-notes/3.6-upgrade-standalone/#prerequisites)
+- [Upgrade from 3.6 to 4.0](https://www.mongodb.com/docs/manual/release-notes/4.0-upgrade-standalone/#prerequisites)
+- [Upgrade from 4.0 to 4.2](https://www.mongodb.com/docs/manual/release-notes/4.2-upgrade-standalone/#prerequisites)
+- [Upgrade from 4.2 to 4.4](https://www.mongodb.com/docs/manual/release-notes/4.4-upgrade-standalone/#prerequisites) <- stop here if you use `Bionic (18.04)`
+- [Upgrade from 4.4 to 5.0](https://www.mongodb.com/docs/manual/release-notes/5.0-upgrade-standalone/#prerequisites) <- stop here if you use `Focal (20.04)`
 
 ### Automated script
 
@@ -217,11 +217,11 @@ You can see the list of versions you would need to run with the script above.
 
 Example path from `3.2` to `4.4` would mean running the script once per `NEXT_VERSION_TO_UPGRADE_TO` with the values below
 
-* `NEXT_VERSION_TO_UPGRADE_TO=3.2`
-* `NEXT_VERSION_TO_UPGRADE_TO=3.6`
-* `NEXT_VERSION_TO_UPGRADE_TO=4.0`
-* `NEXT_VERSION_TO_UPGRADE_TO=4.2`
-* `NEXT_VERSION_TO_UPGRADE_TO=4.4`
+- `NEXT_VERSION_TO_UPGRADE_TO=3.2`
+- `NEXT_VERSION_TO_UPGRADE_TO=3.6`
+- `NEXT_VERSION_TO_UPGRADE_TO=4.0`
+- `NEXT_VERSION_TO_UPGRADE_TO=4.2`
+- `NEXT_VERSION_TO_UPGRADE_TO=4.4`
 
 ```sh
 NEXT_VERSION_TO_UPGRADE_TO=
