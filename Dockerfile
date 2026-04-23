@@ -73,8 +73,6 @@ EXPOSE 9700/tcp
 
 ENTRYPOINT ["/bin/start-pritunl"]
 
-CMD ["/usr/bin/tail", "-f", "/var/log/pritunl.log", "/var/log/mongodb/mongod.log"]
-
 ARG BUILD_DATE
 
 LABEL org.opencontainers.image.authors="Christian 'Jippi' Winther <github-pritunl@jippi.dev>"
