@@ -64,8 +64,8 @@ docker exec -it pritunl pritunl default-password
 ```sh
 data_dir=$(pwd)/data
 
-mkdir -p $(data_dir)/pritunl $(data_dir)/mongodb
-touch $(data_dir)/pritunl.conf
+mkdir -p ${data_dir}/pritunl ${data_dir}/mongodb
+touch ${data_dir}/pritunl.conf
 
 docker run \
     --name pritunl \
@@ -74,9 +74,9 @@ docker run \
     --dns 127.0.0.1 \
     --restart=unless-stopped \
     --detach \
-    --volume $(data_dir)/pritunl.conf:/etc/pritunl.conf \
-    --volume $(data_dir)/pritunl:/var/lib/pritunl \
-    --volume $(data_dir)/mongodb:/var/lib/mongodb \
+    --volume ${data_dir}/pritunl.conf:/etc/pritunl.conf \
+    --volume ${data_dir}/pritunl:/var/lib/pritunl \
+    --volume ${data_dir}/mongodb:/var/lib/mongodb \
     ghcr.io/jippi/docker-pritunl
 ```
 
@@ -85,8 +85,8 @@ docker run \
 ```sh
 data_dir=$(pwd)/data
 
-mkdir -p $(data_dir)/pritunl $(data_dir)/mongodb
-touch $(data_dir)/pritunl.conf
+mkdir -p ${data_dir}/pritunl ${data_dir}/mongodb
+touch ${data_dir}/pritunl.conf
 ```
 
 and then the following `docker-compose.yaml` file in `$(pwd)` followed by `docker-compose up -d`
@@ -119,8 +119,8 @@ services:
 ```sh
 data_dir=$(pwd)/data
 
-mkdir -p $(data_dir)/pritunl
-touch $(data_dir)/pritunl.conf
+mkdir -p ${data_dir}/pritunl
+touch ${data_dir}/pritunl.conf
 
 docker run \
     --name pritunl \
@@ -129,8 +129,8 @@ docker run \
     --dns 127.0.0.1 \
     --restart=unless-stopped \
     --detach \
-    --volume $(data_dir)/pritunl.conf:/etc/pritunl.conf \
-    --volume $(data_dir)/pritunl:/var/lib/pritunl \
+    --volume ${data_dir}/pritunl.conf:/etc/pritunl.conf \
+    --volume ${data_dir}/pritunl:/var/lib/pritunl \
     --env PRITUNL_MONGODB_URI=mongodb://some-mongo-host:27017/pritunl \
     ghcr.io/jippi/docker-pritunl
 ```
@@ -140,8 +140,8 @@ docker run \
 ```sh
 data_dir=$(pwd)/data
 
-mkdir -p $(data_dir)/pritunl
-touch $(data_dir)/pritunl.conf
+mkdir -p ${data_dir}/pritunl
+touch ${data_dir}/pritunl.conf
 ```
 
 在当前目录(`$(pwd)`)将下面内容添加到`docker-compose.yaml`文件中，然后执行`docker-compose up -d`

@@ -61,8 +61,8 @@ I would recommend using a Docker `volume` or `bind` mount for persistent data li
 ```sh
 data_dir=$(pwd)/data
 
-mkdir -p $(data_dir)/pritunl $(data_dir)/mongodb
-touch $(data_dir)/pritunl.conf
+mkdir -p ${data_dir}/pritunl ${data_dir}/mongodb
+touch ${data_dir}/pritunl.conf
 
 docker run \
     --name pritunl \
@@ -71,9 +71,9 @@ docker run \
     --dns 127.0.0.1 \
     --restart=unless-stopped \
     --detach \
-    --volume $(data_dir)/pritunl.conf:/etc/pritunl.conf \
-    --volume $(data_dir)/pritunl:/var/lib/pritunl \
-    --volume $(data_dir)/mongodb:/var/lib/mongodb \
+    --volume ${data_dir}/pritunl.conf:/etc/pritunl.conf \
+    --volume ${data_dir}/pritunl:/var/lib/pritunl \
+    --volume ${data_dir}/mongodb:/var/lib/mongodb \
     ghcr.io/jippi/docker-pritunl
 ```
 
@@ -82,8 +82,8 @@ docker run \
 ```sh
 data_dir=$(pwd)/data
 
-mkdir -p $(data_dir)/pritunl $(data_dir)/mongodb
-touch $(data_dir)/pritunl.conf
+mkdir -p ${data_dir}/pritunl ${data_dir}/mongodb
+touch ${data_dir}/pritunl.conf
 ```
 
 and then the following `docker-compose.yaml` file in `$(pwd)` followed by `docker-compose up -d`
@@ -116,8 +116,8 @@ If you have MongoDB running somewhere else you'd like to use, you can do so thro
 ```sh
 data_dir=$(pwd)/data
 
-mkdir -p $(data_dir)/pritunl
-touch $(data_dir)/pritunl.conf
+mkdir -p ${data_dir}/pritunl
+touch ${data_dir}/pritunl.conf
 
 docker run \
     --name pritunl \
@@ -126,8 +126,8 @@ docker run \
     --dns 127.0.0.1 \
     --restart=unless-stopped \
     --detach \
-    --volume $(data_dir)/pritunl.conf:/etc/pritunl.conf \
-    --volume $(data_dir)/pritunl:/var/lib/pritunl \
+    --volume ${data_dir}/pritunl.conf:/etc/pritunl.conf \
+    --volume ${data_dir}/pritunl:/var/lib/pritunl \
     --env PRITUNL_MONGODB_URI=mongodb://some-mongo-host:27017/pritunl \
     ghcr.io/jippi/docker-pritunl
 ```
@@ -137,8 +137,8 @@ docker run \
 ```sh
 data_dir=$(pwd)/data
 
-mkdir -p $(data_dir)/pritunl
-touch $(data_dir)/pritunl.conf
+mkdir -p ${data_dir}/pritunl
+touch ${data_dir}/pritunl.conf
 ```
 
 and then the following `docker-compose.yaml` file in `$(pwd)` followed by `docker-compose up -d`
